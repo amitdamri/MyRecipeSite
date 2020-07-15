@@ -16,8 +16,8 @@ import VueCookies from "vue-cookies";
 Vue.use(VueCookies);
 
 import Vuelidate from "vuelidate";
-import Navbar from "./Navbar";
-Vue.component("Navbar", Navbar);
+//import Navbar from "./Navbar";
+//Vue.component("Navbar", Navbar);
 
 //bootstrap
 import "bootstrap/dist/css/bootstrap.css";
@@ -97,7 +97,7 @@ const shared_data = {
     console.log("login", this.username);
   },
 
-  Logout() {
+  logout() {
     console.log("logout");
     localStorage.removeItem("username");
     if (localStorage.searchLastResults)
