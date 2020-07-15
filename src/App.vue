@@ -1,18 +1,6 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link :to="{ name: 'main' }">Vue Recipes</router-link>|
-      <router-link :to="{ name: 'search' }">Search</router-link>|
-      {{ !$root.store.username }}
-      <span v-if="!$root.store.username">
-        Guest:
-        <router-link :to="{ name: 'register' }">Register</router-link>|
-        <router-link :to="{ name: 'login' }">Login</router-link>|
-      </span>
-      <span v-else>
-        {{ $root.store.username }}: <button @click="Logout">Logout</button>|
-      </span>
-    </div>
+    <Navbar></Navbar>
     <router-view />
   </div>
 </template>
@@ -20,16 +8,6 @@
 <script>
 export default {
   name: "App",
-  methods: {
-    Logout() {
-      this.$root.store.logout();
-      this.$root.toast("Logout", "User logged out successfully", "success");
-
-      this.$router.push("/").catch(() => {
-        this.$forceUpdate();
-      });
-    }
-  }
 };
 </script>
 
@@ -42,6 +20,15 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
   min-height: 100vh;
+  background-image: url("../resources/dough.jpg");
+  background-repeat: no-repeat;
+  background-size:cover;
+  position: fixed;
+	width: 100%;
+	height: 100px;
+  overflow-y:scroll;
+  overflow-x:hidden;
+
 }
 
 #nav {
@@ -56,4 +43,5 @@ export default {
 #nav a.router-link-exact-active {
   color: #42b983;
 }
+
 </style>

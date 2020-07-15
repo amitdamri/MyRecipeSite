@@ -2,17 +2,23 @@ import Vue from "vue";
 import App from "./App.vue";
 import VueAxios from "vue-axios";
 import axios from "axios";
+import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap-vue/dist/bootstrap-vue.css";
 
-import routes from "./routes";
 import VueRouter from "vue-router";
 Vue.use(VueRouter);
+import routes from "./routes";
 const router = new VueRouter({
   routes,
 });
 
+import VueCookies from 'vue-cookies';
+Vue.use(VueCookies);
+
 import Vuelidate from "vuelidate";
-import "bootstrap/dist/css/bootstrap.css";
-import "bootstrap-vue/dist/bootstrap-vue.css";
+import Navbar from "./Navbar";
+Vue.component('Navbar' , Navbar);
+
 import {
   FormGroupPlugin,
   FormPlugin,
@@ -84,6 +90,7 @@ console.log(shared_data);
 
 new Vue({
   router,
+  Navbar,
   data() {
     return {
       store: shared_data,

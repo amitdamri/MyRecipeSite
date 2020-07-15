@@ -1,14 +1,19 @@
 <template>
   <b-container>
-    <h3>
-      {{ title }}:
+    <h3 class="title">
+      {{ title }}
       <slot></slot>
     </h3>
-    <b-row>
-      <b-col v-for="r in recipes" :key="r.id">
+    <b-col v-if="recipes.length > 0">
+      <b-col v-for="r in recipes" :key="r.key">
         <RecipePreview class="recipePreview" :recipe="r" />
       </b-col>
-    </b-row>
+    </b-col>
+    <b-col v-else>
+      <div>
+        <h1> <span class="badge badge-secondary">No recipes to show</span></h1>
+      </div>
+    </b-col>
   </b-container>
 </template>
 
@@ -23,33 +28,9 @@ export default {
     title: {
       type: String,
       required: true
-    }
+    },
+    recipes: Array
   },
-  data() {
-    return {
-      recipes: []
-    };
-  },
-  mounted() {
-    this.updateRecipes();
-  },
-  methods: {
-    async updateRecipes() {
-      try {
-        const response = await this.axios.get(
-          "https://test-for-3-2.herokuapp.com/recipes/random"
-        );
-
-        // console.log(response);
-        const recipes = response.data.recipes;
-        this.recipes = [];
-        this.recipes.push(...recipes);
-        // console.log(this.recipes);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }
 };
 </script>
 
@@ -57,4 +38,11 @@ export default {
 .container {
   min-height: 400px;
 }
+.title {
+    font-family: Sriracha;
+    font-size: 40px;
+    color: white;
+    width: 100%;
+}
+
 </style>
