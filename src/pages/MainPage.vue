@@ -1,31 +1,42 @@
 <template>
   <div class="container">
     <div style="float: left;">
-    <RecipePreviewList title="Explore these recipes" :recipes="random_recipes"/>
+      <RecipePreviewList
+        title="Explore these recipes"
+        :recipes="random_recipes"
+      />
     </div>
     <div style="float: right;">
-    <router-link tag="b-button" variant="primary" v-if="!$root.store.username" :to="{name: 'login'}">Login to View this</router-link>
-    <RecipePreviewList v-if="$root.store.username"
-    title="Last watched recipes"
-      :class="{
-        RandomRecipes: true,
-        blur: !$root.store.username,
-        center: true
-      }"
-      :recipes="last_watched_recipes"
-      disabled
-    ></RecipePreviewList>
-    <RecipePreviewList v-else
-    title="Last watched recipes"
-      :class="{
-        RandomRecipes: true,
-        blur: !$root.store.username,
-        center: true,
-        isDisabled: true,
-      }"
-      :recipes="pseudo_watched_recipes"
-      disabled
-    ></RecipePreviewList>
+      <router-link
+        tag="b-button"
+        variant="primary"
+        v-if="!$root.store.username"
+        :to="{ name: 'login' }"
+        >Login to View this</router-link
+      >
+      <RecipePreviewList
+        v-if="$root.store.username"
+        title="Last watched recipes"
+        :class="{
+          RandomRecipes: true,
+          blur: !$root.store.username,
+          center: true,
+        }"
+        :recipes="last_watched_recipes"
+        disabled
+      ></RecipePreviewList>
+      <RecipePreviewList
+        v-else
+        title="Last watched recipes"
+        :class="{
+          RandomRecipes: true,
+          blur: !$root.store.username,
+          center: true,
+          isDisabled: true,
+        }"
+        :recipes="pseudo_watched_recipes"
+        disabled
+      ></RecipePreviewList>
     </div>
   </div>
 </template>
@@ -34,21 +45,20 @@
 import RecipePreviewList from "../components/RecipePreviewList";
 export default {
   components: {
-    RecipePreviewList
+    RecipePreviewList,
   },
   data() {
     return {
       random_recipes: [],
       pseudo_watched_recipes: [],
       last_watched_recipes: [],
-    }
+    };
   },
   created() {
     this.updateRandomRecipes();
     if (this.$root.store.username) {
       this.updateWatchedRecipes();
-    }
-    else {
+    } else {
       this.updatePseudoWatchedRecipes();
     }
   },
@@ -57,18 +67,19 @@ export default {
       try {
         this.axios.defaults.withCredentials = true;
         const response = await this.axios.get(
-          "http://localhost:3000/recipes/3RandomRecipes",
+          "http://localhost:3000/recipes/3RandomRecipes"
         );
         if (this.$root.store.username) {
-          let recipesIDs = this.getRecipesIDsAsArray(Object.keys(response.data));
+          let recipesIDs = this.getRecipesIDsAsArray(
+            Object.keys(response.data)
+          );
           const userAddResponse = await this.axios.get(
-          `http://localhost:3000/user/recipePreview/${recipesIDs}`,
-        );
+            `http://localhost:3000/user/recipePreview/${recipesIDs}`
+          );
           return this.getRecipesPreviewUsers(response, userAddResponse);
         }
-        
-        return this.getRecipesPreviewGuests(response);
 
+        return this.getRecipesPreviewGuests(response);
       } catch (error) {
         console.log(error);
       }
@@ -76,61 +87,66 @@ export default {
     getRecipesPreviewUsers(response, userAddResponse) {
       this.random_recipes = Object.keys(response.data).map((recipeID) => {
         return {
-            id: recipeID,
-            image: response.data[recipeID].image,
-            title: response.data[recipeID].title,
-            readyInMinutes: response.data[recipeID].readyInMinutes,
-            aggregateLikes: response.data[recipeID].aggregateLikes,
-            vegetarian: response.data[recipeID].vegetarian,
-            vegan: response.data[recipeID].vegan,
-            glutenFree: response.data[recipeID].glutenFree,
-            watchedBefore: userAddResponse.data[recipeID].watchedBefore,
-            savedInFavorites: userAddResponse.data[recipeID].savedInFavorites
-          };
-        });
+          id: recipeID,
+          image: response.data[recipeID].image,
+          title: response.data[recipeID].title,
+          readyInMinutes: response.data[recipeID].readyInMinutes,
+          aggregateLikes: response.data[recipeID].aggregateLikes,
+          vegetarian: response.data[recipeID].vegetarian,
+          vegan: response.data[recipeID].vegan,
+          glutenFree: response.data[recipeID].glutenFree,
+          watchedBefore: userAddResponse.data[recipeID].watchedBefore,
+          savedInFavorites: userAddResponse.data[recipeID].savedInFavorites,
+        };
+      });
     },
     getRecipesPreviewGuests(response) {
       this.random_recipes = Object.keys(response.data).map((recipeID) => {
-          return {
-            id: recipeID,
-            image: response.data[recipeID].image,
-            title: response.data[recipeID].title,
-            readyInMinutes: response.data[recipeID].readyInMinutes,
-            aggregateLikes: response.data[recipeID].aggregateLikes,
-            vegetarian: response.data[recipeID].vegetarian,
-            vegan: response.data[recipeID].vegan,
-            glutenFree: response.data[recipeID].glutenFree,
-          };
-        });
+        return {
+          id: recipeID,
+          image: response.data[recipeID].image,
+          title: response.data[recipeID].title,
+          readyInMinutes: response.data[recipeID].readyInMinutes,
+          aggregateLikes: response.data[recipeID].aggregateLikes,
+          vegetarian: response.data[recipeID].vegetarian,
+          vegan: response.data[recipeID].vegan,
+          glutenFree: response.data[recipeID].glutenFree,
+        };
+      });
     },
     async updateWatchedRecipes() {
-      
       try {
-
         const response_userAddition = await this.axios.get(
           "http://localhost:3000/user/last3RecipesWatched"
         );
-        
-        const recipesIDs = this.getRecipesIDsAsArray(Object.keys(response_userAddition.data));
-        
+
+        const recipesIDs = this.getRecipesIDsAsArray(
+          Object.keys(response_userAddition.data)
+        );
+
         const response_recipePreviews = await this.axios.get(
           `http://localhost:3000/recipes/recipePreview/${recipesIDs}`
         );
-        
-        this.last_watched_recipes = Object.keys(response_userAddition.data).map((recipeID) => {
-          return {
+
+        this.last_watched_recipes = Object.keys(response_userAddition.data).map(
+          (recipeID) => {
+            return {
               id: recipeID,
               image: response_recipePreviews.data[recipeID].image,
               title: response_recipePreviews.data[recipeID].title,
-              readyInMinutes: response_recipePreviews.data[recipeID].readyInMinutes,
-              aggregateLikes: response_recipePreviews.data[recipeID].aggregateLikes,
+              readyInMinutes:
+                response_recipePreviews.data[recipeID].readyInMinutes,
+              aggregateLikes:
+                response_recipePreviews.data[recipeID].aggregateLikes,
               vegetarian: response_recipePreviews.data[recipeID].vegetarian,
               vegan: response_recipePreviews.data[recipeID].vegan,
               glutenFree: response_recipePreviews.data[recipeID].glutenFree,
               watchedBefore: response_userAddition.data[recipeID].watchedBefore,
-              savedInFavorites: response_userAddition.data[recipeID].savedInFavorites
-          };
-        });
+              savedInFavorites:
+                response_userAddition.data[recipeID].savedInFavorites,
+            };
+          }
+        );
       } catch (error) {
         console.log(error);
       }
@@ -144,15 +160,16 @@ export default {
       try {
         this.axios.defaults.withCredentials = true;
         const response = await this.axios.get(
-          "http://localhost:3000/recipes/3RandomRecipes",
+          "http://localhost:3000/recipes/3RandomRecipes"
         );
-        return this.getPseudoRecipesPreviewGuests(response); 
+        return this.getPseudoRecipesPreviewGuests(response);
       } catch (error) {
         console.log(error);
       }
     },
     getPseudoRecipesPreviewGuests(response) {
-      this.pseudo_watched_recipes = Object.keys(response.data).map((recipeID) => {
+      this.pseudo_watched_recipes = Object.keys(response.data).map(
+        (recipeID) => {
           return {
             id: recipeID,
             image: response.data[recipeID].image,
@@ -163,11 +180,11 @@ export default {
             vegan: response.data[recipeID].vegan,
             glutenFree: response.data[recipeID].glutenFree,
           };
-        });
+        }
+      );
     },
-  }
+  },
 };
-
 </script>
 
 <style lang="scss" scoped>
@@ -189,8 +206,7 @@ export default {
 }
 
 @font-face {
-    font-family: Sriracha;
-    src: url('../../resources/Sriracha-Regular.ttf') format('truetype');
+  font-family: Sriracha;
+  src: url("../../resources/Sriracha-Regular.ttf") format("truetype");
 }
-
 </style>

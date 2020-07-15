@@ -1,4 +1,3 @@
-
 const routes = [
   {
     path: "/",
@@ -28,7 +27,22 @@ const routes = [
   {
     path: "/about",
     name: "about",
-    component: () => import("./pages/About")
+    component: () => import("./pages/About"),
+  },
+  {
+    path: "/favorites",
+    name: "favorites",
+    component: () => import("./pages/FavoritesPage"),
+  },
+  {
+    path: "/myRecipes",
+    name: "myRecipes",
+    component: () => import("./pages/MyRecipesPage"),
+  },
+  {
+    path: "/familyRecipes",
+    name: "familyRecipes",
+    component: () => import("./pages/FamilyRecipesPage"),
   },
   {
     path: "*",
