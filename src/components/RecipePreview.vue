@@ -4,15 +4,18 @@
     class="recipe-preview"
   >
     <div class="recipe-body">
-      <img v-if="image_load" :src="recipe.image" class="recipe-image" />
+      <img :src="recipe.image" class="recipe-image" />
     </div>
     <div class="recipe-footer">
-      <div :title="recipe.title" class="recipe-title">
+      <div class="recipe-title">
         {{ recipe.title }}
       </div>
       <ul class="recipe-overview">
         <li>{{ recipe.readyInMinutes }} minutes</li>
         <li>{{ recipe.aggregateLikes }} likes</li>
+        <li>vegetarian: {{ recipe.vegetarian }}</li>
+        <li>vegan: {{ recipe.vegan }}</li>
+        <li>glutenFree: {{ recipe.glutenFree }}</li>
       </ul>
     </div>
   </router-link>
@@ -20,21 +23,11 @@
 
 <script>
 export default {
-  mounted() {
-    this.axios.get(this.recipe.image).then((i) => {
-      this.image_load = true;
-    });
-  },
-  data() {
-    return {
-      image_load: false
-    };
-  },
   props: {
     recipe: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
 
     // id: {
     //   type: Number,
@@ -59,7 +52,7 @@ export default {
     //     return undefined;
     //   }
     // }
-  }
+  },
 };
 </script>
 
