@@ -75,10 +75,10 @@
           :numberOfResults="results.length"
           @selected="sortRecipes"
         ></results-bar>
-        <recipe-preview-list-temp
+        <RecipePreviewListRow
           id="recipePrev"
           :recipes="results"
-        ></recipe-preview-list-temp>
+        ></RecipePreviewListRow>
       </div>
 
       <div class="d-flex justify-content-center m-5" v-else-if="!isFound">
@@ -93,7 +93,7 @@ import NumberOfResultsList from "../components/SearchComponenets/NumberOfResults
 import CuisineList from "../components/SearchComponenets/CuisineList";
 import DietList from "../components/SearchComponenets/DietList";
 import IntolerancesList from "../components/SearchComponenets/IntolerancesList";
-import RecipePreviewListTemp from "../components/RecipePreviewListTemp";
+import RecipePreviewListRow from "../components/RecipePreviewListRow";
 import ResultsBar from "../components/SearchComponenets/ResultsBar";
 
 export default {
@@ -102,7 +102,7 @@ export default {
     "cuisine-list": CuisineList,
     "diet-list": DietList,
     "intolerances-list": IntolerancesList,
-    "recipe-preview-list-temp": RecipePreviewListTemp,
+    "RecipePreviewListRow": RecipePreviewListRow,
     "results-bar": ResultsBar,
   },
   data() {
@@ -167,7 +167,7 @@ export default {
 
         //search recipe
         let response = await this.axios.get(
-          `https://assignment3-3-amit-dvir.herokuapp.com/recipes/search/query/${this.searchQuery}/amount/${this.numberOfResults}`,
+          `http://localhost:3000/recipes/search/query/${this.searchQuery}/amount/${this.numberOfResults}`,
           {
             params,
           }
@@ -181,7 +181,7 @@ export default {
             title: response.data[recipeID].title,
             readyInMinutes: response.data[recipeID].readyInMinutes,
             aggregateLikes: response.data[recipeID].aggregateLikes,
-            vegetarian: response.data[recipeID].egetarian,
+            vegetarian: response.data[recipeID].vegetarian,
             vegan: response.data[recipeID].vegan,
             glutenFree: response.data[recipeID].glutenFree,
           };
@@ -232,7 +232,7 @@ export default {
 
 .container {
   padding: 0px;
-  min-width: 960px;
+  min-width: 1300px;
   background-color: rgba(255, 255, 255, 0.8);
 }
 

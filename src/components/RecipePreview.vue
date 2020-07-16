@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="{ name: 'recipe', params: { recipeId: recipe.id } }">
+  <router-link :to="{ name: 'recipe', params: { recipeId: recipe.id } }" @click="markAsWatched()">
     <div>
       <b-card
         :to="{ name: 'recipe', params: { recipeId: recipe.id } }"
@@ -8,10 +8,11 @@
         img-alt="Image"
         img-top
         tag="article"
-        style="max-width: 20rem;"
         class="mb-2"
+        :style="style"
+        @click="markAsWatched()"
       >
-        <b-card-text>
+        <b-card-text class="bcard-text">
           <ul class="recipe-overview">
             <li>
               <div style="float: left;">
@@ -67,17 +68,17 @@
               <div style="float: none; clear: both;"></div>
             </li>
 
-            <li v-if="recipeUserAdd">
+            <li v-if="recipe.watchedBefore != undefined">
               <div style="float: left;">
                 <img src="../../resources/watched.png" width="20" height="20" />
               </div>
               <div style="float: left;">
-                Watched: {{ recipeUserAdd.watchedBefore }}
+                Watched: {{ recipe.watchedBefore }}
               </div>
               <div style="float: none; clear: both;"></div>
             </li>
 
-            <li v-if="recipeUserAdd">
+            <li v-if="recipe.savedInFavorites != undefined">
               <div style="float: left;">
                 <img
                   src="../../resources/favorite.png"
@@ -86,7 +87,7 @@
                 />
               </div>
               <div style="float: left;">
-                Favorite: {{ recipeUserAdd.favorite }}
+                Favorite: {{ recipe.savedInFavorites }}
               </div>
               <div style="float: none; clear: both;"></div>
             </li>
@@ -111,7 +112,34 @@ export default {
       type: Object,
       required: false,
     },
+    width: {
+      type: Number,
+      required: true,
+    },
+    height: {
+      type: Number,
+      required: true,
+    },
   },
+  methods: {
+    async markAsWatched() {
+      try {
+        const response = await this.axios.post(
+          "http://localhost:3000/user/saveFavoriteRecipe",
+          {
+            recipeID: this.recipe.id,
+          }
+        );
+      } catch (err) {
+        console.log(err.response);
+      }
+    },
+  },
+  computed: {
+    style() {
+      return 'max-width: ' + this.width + 'rem; min-height: ' + this.height + 'rem;';
+    }
+  }
 };
 </script>
 
@@ -195,4 +223,9 @@ export default {
 ul {
   list-style-type: none;
 }
+
+.bcard-text {
+  margin-left: -35px !important;
+}
+
 </style>
