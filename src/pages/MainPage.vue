@@ -1,66 +1,61 @@
 <template>
   <div class="container">
+    <b-overlay :show="showSpinner" rounded="sm">
+      <template v-slot:overlay>
+        <div class="text-center">
+          <b-icon icon="stopwatch" font-scale="3" animation="cylon"></b-icon>
+          <p id="cancel-label">Please wait...</p>
+        </div>
+      </template>
+
     <div style="float: left;">
-      <RecipePreviewList
+      <RecipePreviewListCol
         title="Explore these recipes"
         :recipes="random_recipes"
       />
     </div>
     <div style="float: right;">
-      <router-link
-        tag="b-button"
-        variant="primary"
-        v-if="!$root.store.username"
-        :to="{ name: 'login' }"
-        >Login to View this</router-link
-      >
-      <RecipePreviewList
+      <RecipePreviewListCol
         v-if="$root.store.username"
         title="Last watched recipes"
         :class="{
           RandomRecipes: true,
-          blur: !$root.store.username,
           center: true,
         }"
         :recipes="last_watched_recipes"
-        disabled
-      ></RecipePreviewList>
-      <RecipePreviewList
-        v-else
-        title="Last watched recipes"
-        :class="{
-          RandomRecipes: true,
-          blur: !$root.store.username,
-          center: true,
-          isDisabled: true,
-        }"
-        :recipes="pseudo_watched_recipes"
-        disabled
-      ></RecipePreviewList>
+      ></RecipePreviewListCol>
+      <login v-else>
+      </login>
     </div>
+  </b-overlay>
   </div>
 </template>
 
 <script>
-import RecipePreviewList from "../components/RecipePreviewList";
+import RecipePreviewListCol from "../components/RecipePreviewListCol";
+import login from "./LoginPage";
 export default {
   components: {
-    RecipePreviewList,
+    RecipePreviewListCol,
+    login,
   },
   data() {
     return {
       random_recipes: [],
       pseudo_watched_recipes: [],
       last_watched_recipes: [],
+      showSpinner: false,
     };
   },
   created() {
+    this.showSpinner = true;
     this.updateRandomRecipes();
     if (this.$root.store.username) {
       this.updateWatchedRecipes();
     } else {
       this.updatePseudoWatchedRecipes();
     }
+    this.showSpinner = false;
   },
   methods: {
     async updateRandomRecipes() {

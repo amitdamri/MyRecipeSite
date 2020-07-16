@@ -6,7 +6,7 @@
     </h3>
     <b-col v-if="recipes.length > 0">
       <b-col v-for="r in recipes" :key="r.key">
-        <RecipePreview class="recipePreview" :recipe="r" />
+        <RecipePreview class="recipePreview" :recipe="r" :width="20" :height="20" />
       </b-col>
     </b-col>
     <b-col v-else>
