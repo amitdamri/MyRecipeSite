@@ -133,7 +133,7 @@ export default {
     async markAsWatched() {
       try {
         const response = await this.axios.post(
-          "http://localhost:3000/user/saveFavoriteRecipe",
+          "http://localhost:3030/user/setUserWatchedRecipe",
           {
             recipeID: this.recipe.id,
           }

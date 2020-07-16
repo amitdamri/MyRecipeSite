@@ -66,7 +66,7 @@ export default {
   methods: {
     async logout() {
       try {
-        await this.axios.post("http://localhost:3000/auth/Logout");
+        await this.axios.post("http://localhost:3030/auth/Logout");
         this.$root.store.logout();
         this.$router.go("/");
       } catch (error) {

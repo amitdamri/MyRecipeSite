@@ -8,26 +8,25 @@
         </div>
       </template>
 
-    <div style="float: left;">
-      <RecipePreviewListCol
-        title="Explore these recipes"
-        :recipes="random_recipes"
-      />
-    </div>
-    <div style="float: right;">
-      <RecipePreviewListCol
-        v-if="$root.store.username"
-        title="Last watched recipes"
-        :class="{
-          RandomRecipes: true,
-          center: true,
-        }"
-        :recipes="last_watched_recipes"
-      ></RecipePreviewListCol>
-      <login v-else>
-      </login>
-    </div>
-  </b-overlay>
+      <div style="float: left;">
+        <RecipePreviewListCol
+          title="Explore these recipes"
+          :recipes="random_recipes"
+        />
+      </div>
+      <div style="float: right;">
+        <RecipePreviewListCol
+          v-if="$root.store.username"
+          title="Last watched recipes"
+          :class="{
+            RandomRecipes: true,
+            center: true,
+          }"
+          :recipes="last_watched_recipes"
+        ></RecipePreviewListCol>
+        <login v-else> </login>
+      </div>
+    </b-overlay>
   </div>
 </template>
 
@@ -62,14 +61,14 @@ export default {
       try {
         this.axios.defaults.withCredentials = true;
         const response = await this.axios.get(
-          "https://assignment3-3-amit-dvir.herokuapp.com/recipes/3RandomRecipes"
+          "http://localhost:3030/recipes/3RandomRecipes"
         );
         if (this.$root.store.username) {
           let recipesIDs = this.getRecipesIDsAsArray(
             Object.keys(response.data)
           );
           const userAddResponse = await this.axios.get(
-            `https://assignment3-3-amit-dvir.herokuapp.com/user/recipePreview/${recipesIDs}`
+            `http://localhost:3030/user/recipePreview/${recipesIDs}`
           );
           return this.getRecipesPreviewUsers(response, userAddResponse);
         }
@@ -112,7 +111,7 @@ export default {
     async updateWatchedRecipes() {
       try {
         const response_userAddition = await this.axios.get(
-          "https://assignment3-3-amit-dvir.herokuapp.com/user/last3RecipesWatched"
+          "http://localhost:3030/user/last3RecipesWatched"
         );
 
         const recipesIDs = this.getRecipesIDsAsArray(
@@ -120,7 +119,7 @@ export default {
         );
 
         const response_recipePreviews = await this.axios.get(
-          `https://assignment3-3-amit-dvir.herokuapp.com/recipes/recipePreview/${recipesIDs}`
+          `http://localhost:3030/recipes/recipePreview/${recipesIDs}`
         );
 
         this.last_watched_recipes = Object.keys(response_userAddition.data).map(
@@ -155,7 +154,7 @@ export default {
       try {
         this.axios.defaults.withCredentials = true;
         const response = await this.axios.get(
-          "https://assignment3-3-amit-dvir.herokuapp.com/recipes/3RandomRecipes"
+          "http://localhost:3030/recipes/3RandomRecipes"
         );
         return this.getPseudoRecipesPreviewGuests(response);
       } catch (error) {
