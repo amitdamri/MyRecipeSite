@@ -150,7 +150,7 @@ export default {
         this.results = [];
         this.isFound = true;
         this.showSpinner = true;
-
+        console.log(this.searchQuery);
         //advanced search parameters
         if (this.cuisine != undefined && this.cuisine != "Select Cuisine...") {
           params["cuisine"] = this.cuisine;
@@ -167,7 +167,7 @@ export default {
 
         //search recipe
         let response = await this.axios.get(
-          `https://assignment3-3-amit-dvir.herokuapp.com/recipes/search/query/${this.searchQuery}/amount/${this.numberOfResults}`,
+          `http://localhost:3030/recipes/search/query/${this.searchQuery}/amount/${this.numberOfResults}`,
           {
             params,
           }
@@ -192,7 +192,7 @@ export default {
         } else {
           this.isFound = true;
           if (this.$root.store.username) {
-            this.$root.store.searchLastResults = this.results;
+            this.$root.store.setLastSearch(this.results);
           }
         }
       } catch (error) {
@@ -207,7 +207,7 @@ export default {
   },
   created() {
     if (this.$root.store.username && this.$root.store.searchLastResults) {
-      this.results = this.$root.store.searchLastResults;
+      this.results = JSON.parse(this.$root.store.searchLastResults);
     }
   },
 };

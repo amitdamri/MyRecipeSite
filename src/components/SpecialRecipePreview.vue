@@ -1,6 +1,11 @@
 <template>
   <div class="recipe-preview">
-    <router-link :to="{ name: 'recipe', params: { recipeId: recipe.id } }">
+    <router-link
+      :to="{
+        name: 'recipe',
+        params: { type: recipeType, recipe: recipe, recipeId: recipe.id },
+      }"
+    >
       <div class="recipe-body">
         <img :src="recipe.image" class="recipe-image" height="200px" />
       </div>
@@ -11,38 +16,99 @@
           <b-container>
             <b-row>
               <b-col>
-                <i class="fas fa-pizza-slice" style="color:#d58a4dd7"></i>
-                <strong> Ready in:</strong>
-                {{ recipe.readyInMinutes }} minutes</b-col
-              >
-              <b-col>
-                <i class="fas fa-pizza-slice" style="color:#d58a4dd7"></i>
-                <strong> Rating:</strong>
-                {{ recipe.aggregateLikes }} likes</b-col
-              >
-            </b-row>
-            <b-row>
-              <b-col>
-                <i class="fas fa-pizza-slice" style="color:#d58a4dd7"></i>
-                <strong> Vegan:</strong> {{ recipe.vegan ? "Yes" : "No" }}
+                <div style="float: left; margin-right: 2px;">
+                  <img src="../../resources/clock.png" width="20" height="20" />
+                </div>
+                <div style="float: left;">
+                  <strong>Ready in:</strong>
+                  {{ recipe.readyInMinutes }} minutes
+                </div>
+                <div style="float: none; clear: both;"></div>
               </b-col>
 
               <b-col>
-                <i class="fas fa-pizza-slice" style="color:#d58a4dd7"></i>
-                <strong> Vegetarian:</strong>
-                {{ recipe.vegetarian ? "Yes" : "No" }}
+                <div style="float: left; margin-right: 2px;">
+                  <img src="../../resources/likes.jpg" width="20" height="20" />
+                </div>
+                <div style="float: left;">
+                  <strong> Rating:</strong>
+                  {{ recipe.aggregateLikes }} likes
+                </div>
+                <div style="float: none; clear: both;"></div>
               </b-col>
             </b-row>
             <b-row>
               <b-col>
-                <i class="fas fa-pizza-slice" style="color:#d58a4dd7"></i>
-                <strong> GlutenFree:</strong>
-                {{ recipe.glutenFree ? "Yes" : "No" }}
+                <div style="float: left; margin-right: 2px;">
+                  <img src="../../resources/vegan.png" width="20" height="20" />
+                </div>
+                <div style="float: left;">
+                  <strong> Vegan:</strong> {{ recipe.vegan ? "Yes" : "No" }}
+                </div>
+                <div style="float: none; clear: both;"></div>
               </b-col>
+
+              <b-col>
+                <div style="float: left; margin-right: 2px;">
+                  <img
+                    src="../../resources/vegetarian.png"
+                    width="20"
+                    height="20"
+                  />
+                </div>
+                <div style="float: left;">
+                  <strong> Vegetarian:</strong>
+                  {{ recipe.vegetarian ? "Yes" : "No" }}
+                </div>
+                <div style="float: none; clear: both;"></div>
+              </b-col>
+            </b-row>
+            <b-row>
+              <b-col>
+                <div style="float: left; margin-right: 2px;">
+                  <img
+                    src="../../resources/glutenFree.png"
+                    width="20"
+                    height="20"
+                  />
+                </div>
+                <div style="float: left;">
+                  <strong> GlutenFree:</strong>
+                  {{ recipe.glutenFree ? "Yes" : "No" }}
+                </div>
+                <div style="float: none; clear: both;"></div>
+              </b-col>
+
               <b-col>
                 <i class="fas fa-eye" style="color:#d58a4dd7"></i>
-                <strong> Watched:</strong>
-                {{ recipe.watchedBefore ? "Yes" : "No" }}
+                <strong> Watched:</strong> Yes
+              </b-col>
+            </b-row>
+            <b-row>
+              <b-col>
+                <div style="float: left; margin-right: 2px;">
+                  <img
+                    src="../../resources/favorite.png"
+                    width="20"
+                    height="20"
+                  />
+                </div>
+                <div style="float: left;"><strong> Favorite:</strong> Yes</div>
+                <div style="float: none; clear: both;"></div>
+              </b-col>
+
+              <b-col v-if="checkFamilyRecipe">
+                <i class="fas fa-user-edit"></i>
+                <strong> Author:</strong>
+                {{ recipe.author }}
+              </b-col>
+            </b-row>
+
+            <b-row v-if="checkFamilyRecipe">
+              <b-col>
+                <i class="fas fa-sun" style="color:yellow"></i>
+                <strong> WhenAcceptable:</strong>
+                {{ recipe.whenAcceptable }}
               </b-col>
             </b-row>
           </b-container>
@@ -58,6 +124,15 @@ export default {
     recipe: {
       type: Object,
       required: true,
+    },
+    recipeType: {
+      type: String,
+      required: true,
+    },
+  },
+  computed: {
+    checkFamilyRecipe() {
+      return this.recipeType == "familyRecipes";
     },
   },
 };

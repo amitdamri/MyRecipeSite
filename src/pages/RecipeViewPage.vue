@@ -16,9 +16,10 @@
         <div id="firstInfo" class="infoSections">
           <recipe-view-options-list
             @favorite="saveFavorite"
+            :isSpecial="isSpecialRecipe"
           ></recipe-view-options-list>
           <div id="recipeImage">
-            <img :src="recipe.image" />
+            <img :src="recipe.image" width="600px" height="370px" />
           </div>
           <div id="bCard">
             <b-card
@@ -113,83 +114,29 @@
 
 <script>
 import RecipeViewOptionsList from "../components/RecipeViewComponents/RecipeViewOptionsList";
+
 export default {
   components: {
     "recipe-view-options-list": RecipeViewOptionsList,
   },
+
   data() {
     return {
       recipe: null,
       showSpinner: false,
     };
   },
+
   async created() {
     this.showSpinner = true;
-    try {
-      let firstReq = this.axios.get(
-        `https://assignment3-3-amit-dvir.herokuapp.com/recipes/showRecipe/${this.$route.params.recipeId}`
-      );
-      let secondReq = this.axios.get(
-        `https://assignment3-3-amit-dvir.herokuapp.com/recipes/recipePreview/[${this.$route.params.recipeId}]`
-      );
-
-      this.axios
-        .all([firstReq, secondReq])
-        .then(
-          this.axios.spread((...responses) => {
-            const firstResponse = responses[0];
-            const secondResponse = responses[1];
-
-            if (firstResponse.status !== 200 || secondResponse.status !== 200) {
-              this.$router.replace("/NotFound");
-              return;
-            }
-
-            let {
-              instructions,
-              extendedIngredients,
-              servings,
-            } = firstResponse.data[this.$route.params.recipeId];
-
-            let {
-              aggregateLikes,
-              readyInMinutes,
-              image,
-              title,
-              vegan,
-              vegetarian,
-              glutenFree,
-            } = secondResponse.data[this.$route.params.recipeId];
-
-            let _recipe = {
-              instructions,
-              extendedIngredients,
-              servings,
-              aggregateLikes,
-              readyInMinutes,
-              image,
-              title,
-              vegan,
-              vegetarian,
-              glutenFree,
-            };
-            this.recipe = _recipe;
-            this.showSpinner = false;
-          })
-        )
-        .catch((error) => {
-          console.log("error.response.status", error.response.status);
-          this.showSpinner = false;
-          this.$router.replace("/NotFound");
-        });
-    } catch (error) {
-      console.log(error);
-      this.showSpinner = false;
-    }
+    if (!this.$route.params.recipe) await this.getInfoTwoRequests();
+    else await this.getInfoOneRequest();
   },
+
   beforeCreate() {
     document.body.className = "recipeview";
   },
+
   methods: {
     async saveFavorite() {
       if ($root.store.username) {
@@ -205,6 +152,149 @@ export default {
         window.alert("Login first.");
       }
     },
+    //if user inserted recipe id manualy in site path
+    async getInfoTwoRequests() {
+      try {
+        let firstReq = this.axios.get(
+          `https://assignment3-3-amit-dvir.herokuapp.com/recipes/showRecipe/${this.$route.params.recipeId}`
+        );
+        let secondReq = this.axios.get(
+          `https://assignment3-3-amit-dvir.herokuapp.com/recipes/recipePreview/[${this.$route.params.recipeId}]`
+        );
+        this.axios
+          .all([firstReq, secondReq])
+          .then(
+            this.axios.spread((...responses) => {
+              const firstResponse = responses[0];
+              const secondResponse = responses[1];
+
+              if (
+                firstResponse.status !== 200 ||
+                secondResponse.status !== 200
+              ) {
+                this.$router.replace("/NotFound");
+                return;
+              }
+
+              let {
+                instructions,
+                extendedIngredients,
+                servings,
+              } = firstResponse.data[this.$route.params.recipeId];
+
+              let {
+                aggregateLikes,
+                readyInMinutes,
+                image,
+                title,
+                vegan,
+                vegetarian,
+                glutenFree,
+              } = secondResponse.data[this.$route.params.recipeId];
+
+              let _recipe = {
+                instructions,
+                extendedIngredients,
+                servings,
+                aggregateLikes,
+                readyInMinutes,
+                image,
+                title,
+                vegan,
+                vegetarian,
+                glutenFree,
+              };
+              this.recipe = _recipe;
+              this.showSpinner = false;
+            })
+          )
+          .catch((error) => {
+            console.log("error.response.status", error.response.status);
+            this.showSpinner = false;
+            this.$router.replace("/NotFound");
+          });
+      } catch (error) {
+        console.log(error);
+        this.showSpinner = false;
+      }
+    },
+    //if user clicked on recipe image
+    async getInfoOneRequest() {
+      try {
+        let response = {};
+        if (this.$route.params.type == "api") {
+          response = await this.axios.get(
+            `https://assignment3-3-amit-dvir.herokuapp.com/recipes/showRecipe/${this.$route.params.recipeId}`
+          );
+        } else if (this.$route.params.type == "myRecipes") {
+          response = await this.axios.get(
+            `http://localhost:3030/user/showUserRecipe/${this.$route.params.recipeId}`
+          );
+        } else if (this.$route.params.type == "familyRecipes") {
+          response = await this.axios.get(
+            `http://localhost:3030/user/showUserFamilyRecipe/${this.$route.params.recipeId}`
+          );
+        } else {
+          this.$router.replace("/NotFound");
+          return;
+        }
+
+        if (response.status !== 200) {
+          this.$router.replace("/NotFound");
+          return;
+        }
+
+        let { instructions, extendedIngredients, servings } = response.data[
+          this.$route.params.recipeId
+        ];
+
+        let {
+          aggregateLikes,
+          readyInMinutes,
+          image,
+          title,
+          vegan,
+          vegetarian,
+          glutenFree,
+        } = this.$route.params.recipe;
+
+        let _recipe = {
+          instructions,
+          extendedIngredients,
+          servings,
+          aggregateLikes,
+          readyInMinutes,
+          image,
+          title,
+          vegan,
+          vegetarian,
+          glutenFree,
+        };
+
+        this.recipe = _recipe;
+        this.showSpinner = false;
+      } catch (error) {
+        this.showSpinner = false;
+
+        this.$router.replace("/NotFound");
+        console.log(error);
+      }
+    },
+  },
+
+  watch: {
+    $route(to, from) {
+      this.$route.params.recipeId = to.params.recipeId;
+    },
+  },
+
+  computed: {
+    isSpecialRecipe() {
+      return (
+        this.$route.params.type == "myRecipes" ||
+        this.$route.params.type == "familyRecipes"
+      );
+    },
   },
 };
 </script>
@@ -213,6 +303,7 @@ export default {
 .container {
   background-color: rgba(255, 255, 255, 0.8);
   width: 1100px;
+  min-width: 1100px;
   min-height: 700px;
 }
 

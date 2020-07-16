@@ -1,7 +1,11 @@
 <template>
   <b-container>
     <b-row v-for="r in recipes" :key="r.id">
-      <special-recipe-preview class="recipePreview" :recipe="r" />
+      <special-recipe-preview
+        class="recipePreview"
+        :recipe="r"
+        :recipeType="recipesType"
+      />
     </b-row>
   </b-container>
 </template>
@@ -16,6 +20,10 @@ export default {
   props: {
     recipes: {
       type: Array,
+      required: true,
+    },
+    recipesType: {
+      type: String,
       required: true,
     },
   },

@@ -1,5 +1,10 @@
 <template>
-  <router-link :to="{ name: 'recipe', params: { recipeId: recipe.id } }">
+  <router-link
+    :to="{
+      name: 'recipe',
+      params: { type: 'api', recipeId: recipe.id, recipe: recipe },
+    }"
+  >
     <div>
       <b-card
         :to="{ name: 'recipe', params: { recipeId: recipe.id } }"
@@ -27,7 +32,9 @@
               <div style="float: left;">
                 <img src="../../resources/likes.jpg" width="20" height="20" />
               </div>
-              <div style="float: left;">{{ recipe.aggregateLikes }} likes</div>
+              <div style="float: left;">
+                Rating: {{ recipe.aggregateLikes }} likes
+              </div>
               <div style="float: none; clear: both;"></div>
             </li>
 

@@ -7,7 +7,7 @@
           <p id="cancel-label">Please wait...</p>
         </div>
       </template>
-      <special-recipe-preview :recipes="recipes" />
+      <special-recipe-preview-list :recipes="recipes" recipesType="myRecipes" />
     </b-overlay>
   </div>
 </template>
@@ -16,7 +16,7 @@
 import SpecialRecipePreviewList from "../components/SpecialRecipePreviewList";
 export default {
   components: {
-    "special-recipe-preview": SpecialRecipePreviewList,
+    "special-recipe-preview-list": SpecialRecipePreviewList,
   },
   data() {
     return {
@@ -36,22 +36,17 @@ export default {
         `https://assignment3-3-amit-dvir.herokuapp.com/user/MyRecipes`
       );
 
-      let recipesPreview = await this.axios.get(
-        `https://assignment3-3-amit-dvir.herokuapp.com/recipes/recipePreview/[${Object.keys(
-          response.data
-        )}]`
-      );
       //set results
       this.recipes = Object.keys(response.data).map((recipeID) => {
         return {
           id: recipeID,
-          image: recipesPreview.data[recipeID].image,
-          title: recipesPreview.data[recipeID].title,
-          readyInMinutes: recipesPreview.data[recipeID].readyInMinutes,
-          aggregateLikes: recipesPreview.data[recipeID].aggregateLikes,
-          vegetarian: recipesPreview.data[recipeID].egetarian,
-          vegan: recipesPreview.data[recipeID].vegan,
-          glutenFree: recipesPreview.data[recipeID].glutenFree,
+          image: response.data[recipeID].image,
+          title: response.data[recipeID].title,
+          readyInMinutes: response.data[recipeID].readyInMinutes,
+          aggregateLikes: response.data[recipeID].aggregateLikes,
+          vegetarian: response.data[recipeID].egetarian,
+          vegan: response.data[recipeID].vegan,
+          glutenFree: response.data[recipeID].glutenFree,
           watchedBefore: response.data[recipeID].watchedBefore,
           savedInFavorites: response.data[recipeID].savedInFavorites,
         };

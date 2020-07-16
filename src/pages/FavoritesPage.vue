@@ -7,7 +7,7 @@
           <p id="cancel-label">Please wait...</p>
         </div>
       </template>
-      <special-recipe-preview :recipes="recipes" />
+      <special-recipe-preview :recipes="recipes" recipesType="api" />
     </b-overlay>
   </div>
 </template>
@@ -33,11 +33,11 @@ export default {
 
     try {
       let response = await this.axios.get(
-        `http://localhost:3000/user/MyFavorites`
+        `https://assignment3-3-amit-dvir.herokuapp.com/user/MyFavorites`
       );
 
       let recipesPreview = await this.axios.get(
-        `http://localhost:3000/recipes/recipePreview/[${Object.keys(
+        `https://assignment3-3-amit-dvir.herokuapp.com/recipes/recipePreview/[${Object.keys(
           response.data
         )}]`
       );

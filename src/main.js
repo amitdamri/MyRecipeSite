@@ -94,6 +94,7 @@ const shared_data = {
   login(username) {
     localStorage.setItem("username", username);
     this.username = username;
+    this.searchLastResults = undefined;
     console.log("login", this.username);
   },
 
@@ -104,6 +105,11 @@ const shared_data = {
       localStorage.removeItem("searchLastResults");
     this.username = undefined;
     this.searchLastResults = undefined;
+  },
+
+  setLastSearch(recipes) {
+    localStorage.setItem("searchLastResults", JSON.stringify(recipes));
+    this.searchLastResults = localStorage.getItem("searchLastResults");
   },
 };
 console.log(shared_data);

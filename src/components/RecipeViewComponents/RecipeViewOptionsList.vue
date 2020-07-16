@@ -1,6 +1,6 @@
 <template>
   <div class="options">
-    <div class="option">
+    <div class="option" v-if="!isSpecial">
       <button
         type="button"
         title="Add to favorites"
@@ -32,7 +32,17 @@
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    isSpecial: {
+      type: Boolean,
+      required: false,
+      default: () => {
+        return false;
+      },
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>

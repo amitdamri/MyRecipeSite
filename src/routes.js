@@ -20,6 +20,11 @@ const routes = [
     component: () => import("./pages/SearchPage"),
   },
   {
+    path: "/recipe/:type/:recipeId/:recipe",
+    name: "recipe",
+    component: () => import("./pages/RecipeViewPage"),
+  },
+  {
     path: "/recipe/:recipeId",
     name: "recipe",
     component: () => import("./pages/RecipeViewPage"),
