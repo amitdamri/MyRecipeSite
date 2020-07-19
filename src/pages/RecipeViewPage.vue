@@ -17,6 +17,7 @@
           <recipe-view-options-list
             @favorite="saveFavorite"
             :isSpecial="isSpecialRecipe"
+            :isFavorite="isFavoriteRecipe"
           ></recipe-view-options-list>
           <div id="recipeImage">
             <img :src="recipe.image" width="600px" height="370px" />
@@ -144,12 +145,20 @@ export default {
     return {
       recipe: null,
       showSpinner: false,
+      isFavoriteRecipe: false,
     };
   },
 
   async created() {
     this.showSpinner = true;
-    if (this.$route.params.type == "api") await this.getInfoTwoRequests();
+    if (this.$route.params.type == "favorite") {
+      this.isFavoriteRecipe = true;
+    }
+    if (
+      this.$route.params.type == "api" ||
+      this.$route.params.type == "favorite"
+    )
+      await this.getInfoTwoRequests();
     else if (
       this.$route.params.type == "myRecipes" ||
       this.$route.params.type == "familyRecipes"
@@ -165,13 +174,13 @@ export default {
     async saveFavorite() {
       if (this.$root.store.username) {
         try {
-          console.log(this.recipe.id);
           let response = this.axios.post(
             `http://localhost:3030/user/saveFavoriteRecipe`,
             {
               recipeID: this.recipe.id,
             }
           );
+          this.isFavoriteRecipe = true;
         } catch (error) {
           console.log(error);
         }

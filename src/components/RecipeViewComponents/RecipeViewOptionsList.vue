@@ -3,11 +3,13 @@
     <div class="option" v-if="!isSpecial">
       <button
         type="button"
+        :style="checkFavorite"
         title="Add to favorites"
         class="btn btn-outline-success"
         @click="$emit('favorite')"
       >
-        <i class="fa fa-star-o" style="color:red"></i><strong>Save</strong>
+        <i class="fa fa-star-o" style="color:red"></i
+        ><strong>{{ isFavorite ? "Saved" : "Save" }}</strong>
       </button>
     </div>
     <div class="option">
@@ -40,6 +42,18 @@ export default {
       default: () => {
         return false;
       },
+    },
+    isFavorite: {
+      type: Boolean,
+      required: false,
+      default: () => {
+        return false;
+      },
+    },
+  },
+  computed: {
+    checkFavorite() {
+      return this.isFavorite ? "backgroundColor:green;" : "";
     },
   },
 };

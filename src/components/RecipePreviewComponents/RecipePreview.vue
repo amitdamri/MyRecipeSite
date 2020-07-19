@@ -22,7 +22,11 @@
           <ul class="recipe-overview">
             <li>
               <div style="float: left;">
-                <img src="../../resources/clock.png" width="20" height="20" />
+                <img
+                  src="../../../resources/clock.png"
+                  width="20"
+                  height="20"
+                />
               </div>
               <div style="float: left;">
                 Ready in {{ recipe.readyInMinutes }} minutes
@@ -32,7 +36,11 @@
 
             <li>
               <div style="float: left;">
-                <img src="../../resources/likes.jpg" width="20" height="20" />
+                <img
+                  src="../../../resources/likes.jpg"
+                  width="20"
+                  height="20"
+                />
               </div>
               <div style="float: left;">
                 Rating: {{ recipe.aggregateLikes }} likes
@@ -43,7 +51,7 @@
             <li>
               <div style="float: left;">
                 <img
-                  src="../../resources/vegetarian.png"
+                  src="../../../resources/vegetarian.png"
                   width="20"
                   height="20"
                 />
@@ -56,7 +64,11 @@
 
             <li>
               <div style="float: left;">
-                <img src="../../resources/vegan.png" width="20" height="20" />
+                <img
+                  src="../../../resources/vegan.png"
+                  width="20"
+                  height="20"
+                />
               </div>
               <div style="float: left;">
                 Vegan: {{ recipe.vegan ? "Yes" : "No" }}
@@ -67,7 +79,7 @@
             <li>
               <div style="float: left;">
                 <img
-                  src="../../resources/glutenFree.png"
+                  src="../../../resources/glutenFree.png"
                   width="20"
                   height="20"
                 />
@@ -80,7 +92,11 @@
 
             <li v-if="recipe.watchedBefore != undefined">
               <div style="float: left;">
-                <img src="../../resources/watched.png" width="20" height="20" />
+                <img
+                  src="../../../resources/watched.png"
+                  width="20"
+                  height="20"
+                />
               </div>
               <div style="float: left;">
                 Watched: {{ recipe.watchedBefore ? "Yes" : "No" }}
@@ -91,7 +107,7 @@
             <li v-if="recipe.savedInFavorites != undefined">
               <div style="float: left;">
                 <img
-                  src="../../resources/favorite.png"
+                  src="../../../resources/favorite.png"
                   width="20"
                   height="20"
                 />
@@ -142,6 +158,7 @@ export default {
         );
       } catch (err) {
         console.log(err.response);
+        this.$router.replace("/NotFound");
       }
     },
   },

@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import RecipePreviewListCol from "../components/RecipePreviewListCol";
+import RecipePreviewListCol from "../components/RecipePreviewComponents/RecipePreviewListCol";
 import login from "./LoginPage";
 export default {
   components: {

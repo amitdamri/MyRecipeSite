@@ -22,7 +22,11 @@
             <b-row>
               <b-col>
                 <div style="float: left; margin-right: 2px;">
-                  <img src="../../resources/clock.png" width="20" height="20" />
+                  <img
+                    src="../../../resources/clock.png"
+                    width="20"
+                    height="20"
+                  />
                 </div>
                 <div style="float: left;">
                   <strong>Ready in:</strong>
@@ -33,7 +37,11 @@
 
               <b-col>
                 <div style="float: left; margin-right: 2px;">
-                  <img src="../../resources/likes.jpg" width="20" height="20" />
+                  <img
+                    src="../../../resources/likes.jpg"
+                    width="20"
+                    height="20"
+                  />
                 </div>
                 <div style="float: left;">
                   <strong> Rating:</strong>
@@ -45,7 +53,11 @@
             <b-row>
               <b-col>
                 <div style="float: left; margin-right: 2px;">
-                  <img src="../../resources/vegan.png" width="20" height="20" />
+                  <img
+                    src="../../../resources/vegan.png"
+                    width="20"
+                    height="20"
+                  />
                 </div>
                 <div style="float: left;">
                   <strong> Vegan:</strong> {{ recipe.vegan ? "Yes" : "No" }}
@@ -56,7 +68,7 @@
               <b-col>
                 <div style="float: left; margin-right: 2px;">
                   <img
-                    src="../../resources/vegetarian.png"
+                    src="../../../resources/vegetarian.png"
                     width="20"
                     height="20"
                   />
@@ -72,7 +84,7 @@
               <b-col>
                 <div style="float: left; margin-right: 2px;">
                   <img
-                    src="../../resources/glutenFree.png"
+                    src="../../../resources/glutenFree.png"
                     width="20"
                     height="20"
                   />
@@ -93,7 +105,7 @@
               <b-col>
                 <div style="float: left; margin-right: 2px;">
                   <img
-                    src="../../resources/favorite.png"
+                    src="../../../resources/favorite.png"
                     width="20"
                     height="20"
                   />

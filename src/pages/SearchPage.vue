@@ -93,7 +93,7 @@ import NumberOfResultsList from "../components/SearchComponenets/NumberOfResults
 import CuisineList from "../components/SearchComponenets/CuisineList";
 import DietList from "../components/SearchComponenets/DietList";
 import IntolerancesList from "../components/SearchComponenets/IntolerancesList";
-import RecipePreviewListRow from "../components/RecipePreviewListRow";
+import RecipePreviewListRow from "../components/RecipePreviewComponents/RecipePreviewListRow";
 import ResultsBar from "../components/SearchComponenets/ResultsBar";
 
 export default {

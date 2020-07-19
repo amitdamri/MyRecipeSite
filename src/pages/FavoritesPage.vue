@@ -7,13 +7,13 @@
           <p id="cancel-label">Please wait...</p>
         </div>
       </template>
-      <special-recipe-preview :recipes="recipes" recipesType="api" />
+      <special-recipe-preview :recipes="recipes" recipesType="favorite" />
     </b-overlay>
   </div>
 </template>
 
 <script>
-import SpecialRecipePreviewList from "../components/SpecialRecipePreviewList";
+import SpecialRecipePreviewList from "../components/RecipePreviewComponents/SpecialRecipePreviewList";
 export default {
   components: {
     "special-recipe-preview": SpecialRecipePreviewList,
