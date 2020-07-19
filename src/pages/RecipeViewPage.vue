@@ -151,6 +151,11 @@ export default {
 
   async created() {
     this.showSpinner = true;
+
+    if (this.$root.store.username) {
+      this.markAsWatched(this.$route.params.recipeId);
+    }
+
     if (this.$route.params.type == "favorite") {
       this.isFavoriteRecipe = true;
     }
@@ -181,6 +186,17 @@ export default {
             }
           );
           this.isFavoriteRecipe = true;
+          //updates the watched before of the clicked recipe in the last search results
+          if (this.$root.store.searchLastResults) {
+            let lastRecipes = JSON.parse(this.$root.store.searchLastResults);
+            for (let i = 0; i < Object.keys(lastRecipes).length; i++) {
+              if (lastRecipes[i].id == this.recipe.id) {
+                lastRecipes[i].savedInFavorites = true;
+                this.$root.store.setLastSearch(lastRecipes);
+                return;
+              }
+            }
+          }
         } catch (error) {
           console.log(error);
         }
@@ -197,14 +213,21 @@ export default {
         let secondReq = this.axios.get(
           `http://localhost:3030/recipes/recipePreview/[${this.$route.params.recipeId}]`
         );
+        let thirdReq = {};
+
+        if (this.$root.store.username) {
+          thirdReq = this.axios.get(
+            `http://localhost:3030/user/recipePreview/[${this.$route.params.recipeId}]`
+          );
+        }
 
         this.axios
-          .all([firstReq, secondReq])
+          .all([firstReq, secondReq, thirdReq])
           .then(
             this.axios.spread((...responses) => {
               const firstResponse = responses[0];
               const secondResponse = responses[1];
-
+              const thirdResponse = responses[2];
               if (
                 firstResponse.status !== 200 ||
                 secondResponse.status !== 200
@@ -242,6 +265,13 @@ export default {
                 vegetarian,
                 glutenFree,
               };
+
+              if (thirdResponse.status == 200) {
+                this.isFavoriteRecipe =
+                  thirdResponse.data[
+                    this.$route.params.recipeId
+                  ].savedInFavorites;
+              }
 
               this.showSpinner = false;
             })
@@ -317,11 +347,38 @@ export default {
         console.log(error);
       }
     },
+    //if watched recipe through path
+    async markAsWatched(recipeID) {
+      try {
+        const response = await this.axios.post(
+          "http://localhost:3030/user/setUserWatchedRecipe",
+          {
+            recipeID: recipeID,
+          }
+        );
+        //updates the watched before of the clicked recipe in the last search results
+        if (this.$root.store.searchLastResults) {
+          let lastRecipes = JSON.parse(this.$root.store.searchLastResults);
+          for (let i = 0; i < Object.keys(lastRecipes).length; i++) {
+            if (lastRecipes[i].id == recipeID) {
+              lastRecipes[i].watchedBefore = true;
+              this.$root.store.setLastSearch(lastRecipes);
+              return;
+            }
+          }
+        }
+      } catch (err) {
+        console.log(err);
+        this.showSpinner = false;
+        this.$router.replace("/NotFound");
+      }
+    },
   },
 
   watch: {
     $route(to, from) {
-      this.$route.params.recipeId = to.params.recipeId;
+      //this.$route.params.recipeId = to.params.recipeId;
+      this.$router.go("/RecipeViewPage");
     },
   },
 

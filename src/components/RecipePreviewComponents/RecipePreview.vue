@@ -7,7 +7,6 @@
             name: 'recipe',
             params: { type: 'api', recipeId: recipe.id },
           }"
-          @click="markAsWatched()"
         >
           <b-card
             :to="{
@@ -17,7 +16,6 @@
             :img-src="recipe.image"
             img-alt="Image"
             img-top
-            @click="markAsWatched()"
           >
           </b-card>
         </router-link>
@@ -93,7 +91,7 @@
               <div style="float: none; clear: both;"></div>
             </li>
 
-            <li>
+            <li v-if="$root.store.username">
               <div style="float: left;">
                 <img
                   src="../../../resources/watched.png"
@@ -107,7 +105,7 @@
               <div style="float: none; clear: both;"></div>
             </li>
 
-            <li>
+            <li v-if="$root.store.username">
               <div style="float: left;">
                 <button class="clickable" @click="saveFavorite">
                   <img
@@ -153,22 +151,9 @@ export default {
     },
   },
   methods: {
-    async markAsWatched() {
-      try {
-        const response = await this.axios.post(
-          "http://localhost:3030/user/setUserWatchedRecipe",
-          {
-            recipeID: this.recipe.id,
-          }
-        );
-      } catch (err) {
-        console.log(err.response);
-      }
-    },
     async saveFavorite() {
       if (this.$root.store.username) {
         try {
-          console.log(this.recipe.id);
           let response = this.axios.post(
             `http://localhost:3030/user/saveFavoriteRecipe`,
             {
@@ -177,7 +162,7 @@ export default {
           );
           this.recipe.savedInFavorites = true;
         } catch (error) {
-          console.log(error.response);
+          console.log(error);
           this.$router.replace("/NotFound");
         }
       } else {
