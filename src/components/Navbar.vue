@@ -68,7 +68,10 @@ export default {
       try {
         await this.axios.post("http://localhost:3030/auth/Logout");
         this.$root.store.logout();
-        this.$router.go("/");
+        if (this.$router.currentRoute.fullPath == "/")
+          this.$router.go();
+        else
+          this.$router.push("/");
       } catch (error) {
         console.log(error);
       }

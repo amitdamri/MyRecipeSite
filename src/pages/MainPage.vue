@@ -12,18 +12,22 @@
           title="Explore these recipes"
           :recipes="random_recipes"
         />
+        <button
+          type="button"
+          class="btn btn-dark"
+          @click="updateRandomRecipes"
+          style="margin-left: 45px;"
+        >
+          Load new recipes
+        </button>
       </div>
       <div style="float: right;">
         <RecipePreviewListCol
           v-if="$root.store.username"
           title="Last watched recipes"
-          :class="{
-            RandomRecipes: true,
-            center: true,
-          }"
           :recipes="last_watched_recipes"
         ></RecipePreviewListCol>
-        <login v-else> </login>
+        <login v-else style="margin-top: 50px;"> </login>
       </div>
     </div>
   </b-overlay>
@@ -164,22 +168,6 @@ export default {
         console.log(error);
       }
     },
-    getPseudoRecipesPreviewGuests(response) {
-      this.pseudo_watched_recipes = Object.keys(response.data).map(
-        (recipeID) => {
-          return {
-            id: recipeID,
-            image: response.data[recipeID].image,
-            title: response.data[recipeID].title,
-            readyInMinutes: response.data[recipeID].readyInMinutes,
-            aggregateLikes: response.data[recipeID].aggregateLikes,
-            vegetarian: response.data[recipeID].vegetarian,
-            vegan: response.data[recipeID].vegan,
-            glutenFree: response.data[recipeID].glutenFree,
-          };
-        }
-      );
-    },
   },
 };
 </script>
@@ -206,5 +194,8 @@ export default {
 
 .container {
   min-height: 700px;
+}
+.leftCol {
+  margin-bottom: 3rem;
 }
 </style>
