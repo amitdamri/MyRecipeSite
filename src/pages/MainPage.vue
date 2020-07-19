@@ -57,8 +57,6 @@ export default {
       this.updateWatchedRecipes();
     } else {
       this.showSpinner = false;
-
-      //this.updatePseudoWatchedRecipes();
     }
   },
   methods: {
@@ -156,17 +154,6 @@ export default {
       const recipesIDs_toInt = [];
       recipesIDs.map((id) => recipesIDs_toInt.push(parseInt(id)));
       return encodeURIComponent(JSON.stringify(recipesIDs_toInt));
-    },
-    async updatePseudoWatchedRecipes() {
-      try {
-        this.axios.defaults.withCredentials = true;
-        const response = await this.axios.get(
-          "http://localhost:3030/recipes/3RandomRecipes"
-        );
-        return this.getPseudoRecipesPreviewGuests(response);
-      } catch (error) {
-        console.log(error);
-      }
     },
   },
 };
