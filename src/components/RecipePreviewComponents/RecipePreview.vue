@@ -1,23 +1,26 @@
 <template>
-  <router-link
-    :to="{
-      name: 'recipe',
-      params: { type: 'api', recipeId: recipe.id },
-    }"
-    @click="markAsWatched()"
-  >
+  <div>
     <div>
-      <b-card
-        :to="{ name: 'recipe', params: { type: 'api', recipeId: recipe.id } }"
-        :title="recipe.title"
-        :img-src="recipe.image"
-        img-alt="Image"
-        img-top
-        tag="article"
-        class="mb-2"
-        :style="style"
-        @click="markAsWatched()"
-      >
+      <b-card :title="recipe.title" tag="article" class="mb-2" :style="style">
+        <router-link
+          :to="{
+            name: 'recipe',
+            params: { type: 'api', recipeId: recipe.id },
+          }"
+          @click="markAsWatched()"
+        >
+          <b-card
+            :to="{
+              name: 'recipe',
+              params: { type: 'api', recipeId: recipe.id },
+            }"
+            :img-src="recipe.image"
+            img-alt="Image"
+            img-top
+            @click="markAsWatched()"
+          >
+          </b-card>
+        </router-link>
         <b-card-text class="bcard-text">
           <ul class="recipe-overview">
             <li>
@@ -90,7 +93,7 @@
               <div style="float: none; clear: both;"></div>
             </li>
 
-            <li v-if="recipe.watchedBefore != undefined">
+            <li>
               <div style="float: left;">
                 <img
                   src="../../../resources/watched.png"
@@ -104,13 +107,15 @@
               <div style="float: none; clear: both;"></div>
             </li>
 
-            <li v-if="recipe.savedInFavorites != undefined">
+            <li>
               <div style="float: left;">
-                <img
-                  src="../../../resources/favorite.png"
-                  width="20"
-                  height="20"
-                />
+                <button class="clickable" @click="saveFavorite">
+                  <img
+                    src="../../../resources/favorite.png"
+                    width="12"
+                    height="12"
+                  />
+                </button>
               </div>
               <div style="float: left;">
                 Favorite: {{ recipe.savedInFavorites ? "Yes" : "No" }}
@@ -121,7 +126,7 @@
         </b-card-text>
       </b-card>
     </div>
-  </router-link>
+  </div>
 </template>
 
 <script>
@@ -158,8 +163,29 @@ export default {
         );
       } catch (err) {
         console.log(err.response);
-        this.$router.replace("/NotFound");
       }
+    },
+    async saveFavorite() {
+      if (this.$root.store.username) {
+        try {
+          console.log(this.recipe.id);
+          let response = this.axios.post(
+            `http://localhost:3030/user/saveFavoriteRecipe`,
+            {
+              recipeID: this.recipe.id,
+            }
+          );
+          this.recipe.savedInFavorites = true;
+        } catch (error) {
+          console.log(error.response);
+          this.$router.replace("/NotFound");
+        }
+      } else {
+        window.alert("Login first.");
+      }
+    },
+    indicateHover(img) {
+      img.style.border = "solid";
     },
   },
   computed: {
@@ -255,5 +281,15 @@ ul {
 
 .bcard-text {
   margin-left: -35px !important;
+}
+
+.clickable {
+  border: none;
+}
+.clickable:hover {
+  border: solid;
+}
+.clickable:focus {
+  outline: none;
 }
 </style>
