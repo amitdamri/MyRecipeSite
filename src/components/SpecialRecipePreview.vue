@@ -3,11 +3,16 @@
     <router-link
       :to="{
         name: 'recipe',
-        params: { type: recipeType, recipe: recipe, recipeId: recipe.id },
+        params: { type: recipeType, recipeId: recipe.id },
       }"
     >
       <div class="recipe-body">
-        <img :src="recipe.image" class="recipe-image" height="200px" />
+        <img
+          :src="recipe.image"
+          class="recipe-image"
+          height="200px"
+          width="300px"
+        />
       </div>
     </router-link>
     <div class="recipe-info">

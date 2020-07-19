@@ -2,13 +2,13 @@
   <router-link
     :to="{
       name: 'recipe',
-      params: { type: 'api', recipeId: recipe.id, recipe: recipe },
+      params: { type: 'api', recipeId: recipe.id },
     }"
     @click="markAsWatched()"
   >
     <div>
       <b-card
-        :to="{ name: 'recipe', params: { recipeId: recipe.id } }"
+        :to="{ name: 'recipe', params: { type: 'api', recipeId: recipe.id } }"
         :title="recipe.title"
         :img-src="recipe.image"
         img-alt="Image"
@@ -49,7 +49,7 @@
                 />
               </div>
               <div style="float: left;">
-                Vegetarian: {{ recipe.vegetarian }}
+                Vegetarian: {{ recipe.vegetarian ? "Yes" : "No" }}
               </div>
               <div style="float: none; clear: both;"></div>
             </li>
@@ -58,7 +58,9 @@
               <div style="float: left;">
                 <img src="../../resources/vegan.png" width="20" height="20" />
               </div>
-              <div style="float: left;">Vegan: {{ recipe.vegan }}</div>
+              <div style="float: left;">
+                Vegan: {{ recipe.vegan ? "Yes" : "No" }}
+              </div>
               <div style="float: none; clear: both;"></div>
             </li>
 
@@ -71,7 +73,7 @@
                 />
               </div>
               <div style="float: left;">
-                Gluten free: {{ recipe.glutenFree }}
+                Gluten free: {{ recipe.glutenFree ? "Yes" : "No" }}
               </div>
               <div style="float: none; clear: both;"></div>
             </li>
@@ -81,7 +83,7 @@
                 <img src="../../resources/watched.png" width="20" height="20" />
               </div>
               <div style="float: left;">
-                Watched: {{ recipe.watchedBefore }}
+                Watched: {{ recipe.watchedBefore ? "Yes" : "No" }}
               </div>
               <div style="float: none; clear: both;"></div>
             </li>
@@ -95,7 +97,7 @@
                 />
               </div>
               <div style="float: left;">
-                Favorite: {{ recipe.savedInFavorites }}
+                Favorite: {{ recipe.savedInFavorites ? "Yes" : "No" }}
               </div>
               <div style="float: none; clear: both;"></div>
             </li>

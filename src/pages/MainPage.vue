@@ -1,13 +1,12 @@
 <template>
-  <div class="container">
-    <b-overlay :show="showSpinner" rounded="sm">
-      <template v-slot:overlay>
-        <div class="text-center">
-          <b-icon icon="stopwatch" font-scale="3" animation="cylon"></b-icon>
-          <p id="cancel-label">Please wait...</p>
-        </div>
-      </template>
-
+  <b-overlay :show="showSpinner" rounded="sm" id="modal">
+    <template v-slot:overlay>
+      <div class="text-center">
+        <b-icon icon="stopwatch" font-scale="3" animation="cylon"></b-icon>
+        <p id="cancel-label">Please wait...</p>
+      </div>
+    </template>
+    <div class="container">
       <div style="float: left;">
         <RecipePreviewListCol
           title="Explore these recipes"
@@ -26,8 +25,8 @@
         ></RecipePreviewListCol>
         <login v-else> </login>
       </div>
-    </b-overlay>
-  </div>
+    </div>
+  </b-overlay>
 </template>
 
 <script>
@@ -46,15 +45,17 @@ export default {
       showSpinner: false,
     };
   },
-  created() {
+  async created() {
+    console.log("created");
     this.showSpinner = true;
-    this.updateRandomRecipes();
+    await this.updateRandomRecipes();
     if (this.$root.store.username) {
       this.updateWatchedRecipes();
     } else {
-      this.updatePseudoWatchedRecipes();
+      this.showSpinner = false;
+
+      //this.updatePseudoWatchedRecipes();
     }
-    this.showSpinner = false;
   },
   methods: {
     async updateRandomRecipes() {
@@ -141,8 +142,10 @@ export default {
             };
           }
         );
+        this.showSpinner = false;
       } catch (error) {
         console.log(error);
+        this.showSpinner = false;
       }
     },
     getRecipesIDsAsArray(recipesIDs) {
@@ -182,9 +185,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.RandomRecipes {
-  margin: 10px 0 10px;
-}
 .blur {
   -webkit-filter: blur(5px);
   filter: blur(3px);
@@ -202,5 +202,9 @@ export default {
 @font-face {
   font-family: Sriracha;
   src: url("../../resources/Sriracha-Regular.ttf") format("truetype");
+}
+
+.container {
+  min-height: 700px;
 }
 </style>

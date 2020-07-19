@@ -33,7 +33,7 @@ export default {
 
     try {
       let response = await this.axios.get(
-        `https://assignment3-3-amit-dvir.herokuapp.com/user/MyRecipes`
+        `http://localhost:3030/user/MyRecipes`
       );
 
       //set results

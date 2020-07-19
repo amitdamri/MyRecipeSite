@@ -34,21 +34,41 @@
                     <strong> Ready in:</strong>
                     {{ recipe.readyInMinutes }} minutes
                   </li>
+
                   <br />
+
                   <li>
                     <i class="fas fa-pizza-slice" style="color:#d58a4dd7"></i>
-                    <strong> Rating:</strong> {{ recipe.aggregateLikes }} likes
+                    <strong> Rating:</strong>
+                    {{ recipe.aggregateLikes }} likes
                   </li>
+
                   <br />
+
                   <li>
-                    <i class="fas fa-pizza-slice" style="color:#d58a4dd7"></i>
-                    <strong> Vegan:</strong> {{ recipe.vegan ? "Yes" : "No" }}
+                    <span>
+                      <i class="fas fa-pizza-slice" style="color:#d58a4dd7"></i>
+                      <strong> Vegan:</strong> {{ recipe.vegan ? "Yes" : "No" }}
+                    </span>
+                    <span v-if="isFamilyRecipe" style="margin-left:45px;">
+                      <i class="fas fa-user-edit"></i>
+                      <strong> Author:</strong>
+                      {{ recipe.author }}
+                    </span>
                   </li>
+
                   <br />
                   <li>
-                    <i class="fas fa-pizza-slice" style="color:#d58a4dd7"></i>
-                    <strong> Vegetarian:</strong>
-                    {{ recipe.vegetarian ? "Yes" : "No" }}
+                    <span>
+                      <i class="fas fa-pizza-slice" style="color:#d58a4dd7"></i>
+                      <strong> Vegetarian:</strong>
+                      {{ recipe.vegetarian ? "Yes" : "No" }}
+                    </span>
+                    <span v-if="isFamilyRecipe" style="margin-left:10px;">
+                      <i class="fas fa-sun" style="color:green"></i>
+                      <strong> When:</strong>
+                      {{ recipe.whenAcceptable }}
+                    </span>
                   </li>
                   <br />
 
@@ -129,8 +149,12 @@ export default {
 
   async created() {
     this.showSpinner = true;
-    if (!this.$route.params.recipe) await this.getInfoTwoRequests();
-    else await this.getInfoOneRequest();
+    if (this.$route.params.type == "api") await this.getInfoTwoRequests();
+    else if (
+      this.$route.params.type == "myRecipes" ||
+      this.$route.params.type == "familyRecipes"
+    )
+      await this.getInfoOneRequest();
   },
 
   beforeCreate() {
@@ -139,15 +163,18 @@ export default {
 
   methods: {
     async saveFavorite() {
-      if ($root.store.username) {
+      if (this.$root.store.username) {
         try {
-          let response = this.axios.get(
-            `https://assignment3-3-amit-dvir.herokuapp.com/user/saveFavoriteRecipe`,
+          console.log(this.recipe.id);
+          let response = this.axios.post(
+            `http://localhost:3030/user/saveFavoriteRecipe`,
             {
               recipeID: this.recipe.id,
             }
           );
-        } catch (error) {}
+        } catch (error) {
+          console.log(error);
+        }
       } else {
         window.alert("Login first.");
       }
@@ -156,11 +183,12 @@ export default {
     async getInfoTwoRequests() {
       try {
         let firstReq = this.axios.get(
-          `https://assignment3-3-amit-dvir.herokuapp.com/recipes/showRecipe/${this.$route.params.recipeId}`
+          `http://localhost:3030/recipes/showRecipe/${this.$route.params.recipeId}`
         );
         let secondReq = this.axios.get(
-          `https://assignment3-3-amit-dvir.herokuapp.com/recipes/recipePreview/[${this.$route.params.recipeId}]`
+          `http://localhost:3030/recipes/recipePreview/[${this.$route.params.recipeId}]`
         );
+
         this.axios
           .all([firstReq, secondReq])
           .then(
@@ -192,7 +220,8 @@ export default {
                 glutenFree,
               } = secondResponse.data[this.$route.params.recipeId];
 
-              let _recipe = {
+              this.recipe = {
+                id: this.$route.params.recipeId,
                 instructions,
                 extendedIngredients,
                 servings,
@@ -204,7 +233,7 @@ export default {
                 vegetarian,
                 glutenFree,
               };
-              this.recipe = _recipe;
+
               this.showSpinner = false;
             })
           )
@@ -222,11 +251,7 @@ export default {
     async getInfoOneRequest() {
       try {
         let response = {};
-        if (this.$route.params.type == "api") {
-          response = await this.axios.get(
-            `https://assignment3-3-amit-dvir.herokuapp.com/recipes/showRecipe/${this.$route.params.recipeId}`
-          );
-        } else if (this.$route.params.type == "myRecipes") {
+        if (this.$route.params.type == "myRecipes") {
           response = await this.axios.get(
             `http://localhost:3030/user/showUserRecipe/${this.$route.params.recipeId}`
           );
@@ -244,10 +269,6 @@ export default {
           return;
         }
 
-        let { instructions, extendedIngredients, servings } = response.data[
-          this.$route.params.recipeId
-        ];
-
         let {
           aggregateLikes,
           readyInMinutes,
@@ -256,9 +277,15 @@ export default {
           vegan,
           vegetarian,
           glutenFree,
-        } = this.$route.params.recipe;
+          instructions,
+          extendedIngredients,
+          servings,
+          author,
+          whenAcceptable,
+        } = response.data[this.$route.params.recipeId];
 
-        let _recipe = {
+        this.recipe = {
+          id: this.$route.params.recipeId,
           instructions,
           extendedIngredients,
           servings,
@@ -269,9 +296,10 @@ export default {
           vegan,
           vegetarian,
           glutenFree,
+          author,
+          whenAcceptable,
         };
 
-        this.recipe = _recipe;
         this.showSpinner = false;
       } catch (error) {
         this.showSpinner = false;
@@ -295,6 +323,9 @@ export default {
         this.$route.params.type == "familyRecipes"
       );
     },
+    isFamilyRecipe() {
+      return this.$route.params.type == "familyRecipes";
+    },
   },
 };
 </script>
@@ -302,7 +333,6 @@ export default {
 <style lang="scss" scoped>
 .container {
   background-color: rgba(255, 255, 255, 0.8);
-  width: 1100px;
   min-width: 1100px;
   min-height: 700px;
 }

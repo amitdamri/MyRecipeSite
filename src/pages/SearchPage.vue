@@ -150,7 +150,7 @@ export default {
         this.results = [];
         this.isFound = true;
         this.showSpinner = true;
-        console.log(this.searchQuery);
+
         //advanced search parameters
         if (this.cuisine != undefined && this.cuisine != "Select Cuisine...") {
           params["cuisine"] = this.cuisine;
@@ -174,7 +174,7 @@ export default {
         );
 
         //set results
-        this.results = Object.keys(response.data).map((recipeID) => {
+        let _results = Object.keys(response.data).map((recipeID) => {
           return {
             id: recipeID,
             image: response.data[recipeID].image,
@@ -187,6 +187,22 @@ export default {
           };
         });
 
+        if (this.$root.store.username) {
+          const userAddResponse = await this.axios.get(
+            `http://localhost:3030/user/recipePreview/[${Object.keys(
+              response.data
+            )}]`
+          );
+          //set results
+          _results.map((recipe) => {
+            recipe.watchedBefore =
+              userAddResponse.data[recipe.id].watchedBefore;
+            recipe.savedInFavorites =
+              userAddResponse.data[recipe.id].savedInFavorites;
+          });
+        }
+
+        this.results = _results;
         if (this.results.length <= 0) {
           this.isFound = false;
         } else {

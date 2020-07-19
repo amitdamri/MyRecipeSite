@@ -33,11 +33,11 @@ export default {
 
     try {
       let response = await this.axios.get(
-        `https://assignment3-3-amit-dvir.herokuapp.com/user/MyFavorites`
+        `http://localhost:3030/user/MyFavorites`
       );
 
       let recipesPreview = await this.axios.get(
-        `https://assignment3-3-amit-dvir.herokuapp.com/recipes/recipePreview/[${Object.keys(
+        `http://localhost:3030/recipes/recipePreview/[${Object.keys(
           response.data
         )}]`
       );

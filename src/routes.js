@@ -20,12 +20,7 @@ const routes = [
     component: () => import("./pages/SearchPage"),
   },
   {
-    path: "/recipe/:type/:recipeId/:recipe",
-    name: "recipe",
-    component: () => import("./pages/RecipeViewPage"),
-  },
-  {
-    path: "/recipe/:recipeId",
+    path: "/recipe/:type/:recipeId",
     name: "recipe",
     component: () => import("./pages/RecipeViewPage"),
   },
