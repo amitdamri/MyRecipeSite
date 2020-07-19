@@ -110,7 +110,10 @@ export default {
         console.log(this.$root.store.login);
         console.log(this.$cookies.get("session"));
         this.$root.store.login(this.form.username);
-        this.$router.push("/");
+        if (this.$router.currentRoute.fullPath == "/")
+          this.$router.go();
+        else
+          this.$router.push("/");
       } catch (err) {
         console.log(err.response);
         this.form.submitError = err.response.data.message;

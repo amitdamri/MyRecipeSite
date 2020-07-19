@@ -1,32 +1,20 @@
 <template>
   <div class="container">
-    <b-overlay :show="showSpinner" rounded="sm">
-      <template v-slot:overlay>
-        <div class="text-center">
-          <b-icon icon="stopwatch" font-scale="3" animation="cylon"></b-icon>
-          <p id="cancel-label">Please wait...</p>
-        </div>
-      </template>
-
-      <div style="float: left;">
+      <div style="float: left;" class="leftCol">
         <RecipePreviewListCol
           title="Explore these recipes"
           :recipes="random_recipes"
         />
+        <button type="button" class="btn btn-dark" @click="updateRandomRecipes" style="margin-left: 45px;">Load new recipes</button>
       </div>
       <div style="float: right;">
         <RecipePreviewListCol
           v-if="$root.store.username"
           title="Last watched recipes"
-          :class="{
-            RandomRecipes: true,
-            center: true,
-          }"
           :recipes="last_watched_recipes"
         ></RecipePreviewListCol>
-        <login v-else> </login>
+        <login v-else style="margin-top: 50px;"> </login>
       </div>
-    </b-overlay>
   </div>
 </template>
 
@@ -51,10 +39,7 @@ export default {
     this.updateRandomRecipes();
     if (this.$root.store.username) {
       this.updateWatchedRecipes();
-    } else {
-      this.updatePseudoWatchedRecipes();
     }
-    this.showSpinner = false;
   },
   methods: {
     async updateRandomRecipes() {
@@ -161,22 +146,6 @@ export default {
         console.log(error);
       }
     },
-    getPseudoRecipesPreviewGuests(response) {
-      this.pseudo_watched_recipes = Object.keys(response.data).map(
-        (recipeID) => {
-          return {
-            id: recipeID,
-            image: response.data[recipeID].image,
-            title: response.data[recipeID].title,
-            readyInMinutes: response.data[recipeID].readyInMinutes,
-            aggregateLikes: response.data[recipeID].aggregateLikes,
-            vegetarian: response.data[recipeID].vegetarian,
-            vegan: response.data[recipeID].vegan,
-            glutenFree: response.data[recipeID].glutenFree,
-          };
-        }
-      );
-    },
   },
 };
 </script>
@@ -203,4 +172,9 @@ export default {
   font-family: Sriracha;
   src: url("../../resources/Sriracha-Regular.ttf") format("truetype");
 }
+
+.leftCol {
+  margin-bottom: 3rem;
+}
+
 </style>
