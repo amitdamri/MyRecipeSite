@@ -161,6 +161,17 @@ export default {
             }
           );
           this.recipe.savedInFavorites = true;
+          //updates the watched before of the clicked recipe in the last search results
+          if (this.$root.store.searchLastResults) {
+            let lastRecipes = JSON.parse(this.$root.store.searchLastResults);
+            for (let i = 0; i < Object.keys(lastRecipes).length; i++) {
+              if (lastRecipes[i].id == this.recipe.id) {
+                lastRecipes[i].savedInFavorites = true;
+                this.$root.store.setLastSearch(lastRecipes);
+                return;
+              }
+            }
+          }
         } catch (error) {
           console.log(error);
           this.$router.replace("/NotFound");
