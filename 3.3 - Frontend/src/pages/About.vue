@@ -12,16 +12,16 @@
       You are more than welcome to explore this project's other parts:
       <br />
       * <u>Server - Backend:</u>
-      https://github.com/SISE-Web-Development-Environments/assignment-3-2-205520141_312199698
+      <a href="https://github.com/SISE-Web-Development-Environments/assignment-3-3-205520141_312199698/tree/master/3.2%20-%20Backend">Click Here</a>
       <br />
       * <u>Client - Frontend:</u>
-
+      <a href="https://github.com/SISE-Web-Development-Environments/assignment-3-3-205520141_312199698/tree/master/3.3%20-%20Frontend">Click Here</a>
       <br />
-      * <u>API:</u> https://app.swaggerhub.com/apis-docs/amitdamri/Recieps/1.0.1
+      * <u>API:</u> <a href="https://github.com/SISE-Web-Development-Environments/assignment-3-3-205520141_312199698/tree/master/3.1%20-%20API">Click Here</a>
       <br />
       * <u>Other Projects:</u><br />
-      Packman:
-      https://github.com/SISE-Web-Development-Environments/assignment2-amit-dvir
+      Pacman:
+      <a href="https://github.com/SISE-Web-Development-Environments/assignment2-amit-dvir">Click Here</a>
       <br />
       <br />
       <br />
