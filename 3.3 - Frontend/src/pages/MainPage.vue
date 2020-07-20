@@ -57,8 +57,6 @@ export default {
       this.updateWatchedRecipes();
     } else {
       this.showSpinner = false;
-
-      //this.updatePseudoWatchedRecipes();
     }
   },
   methods: {

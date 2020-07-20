@@ -152,15 +152,16 @@ export default {
   async created() {
     this.showSpinner = true;
 
-    if (this.$root.store.username) {
-      this.markAsWatched(this.$route.params.recipeId);
-    }
     if (
       this.$route.params.type == "myRecipes" ||
       this.$route.params.type == "familyRecipes"
     ) {
       await this.getInfoOneRequest();
-    } else if (this.$route.params.type == "api") {
+    }
+    else if (this.$route.params.type == "api") {
+      if (this.$root.store.username) {
+      this.markAsWatched(this.$route.params.recipeId);
+      }
       await this.checkIfFavoriteRecipe();
       await this.getInfoTwoRequests();
     }

@@ -26,8 +26,7 @@ export default {
   },
   async created() {
     this.modalShow = true;
-    if (this.$root.store.username) {
-    } else {
+    if (!this.$root.store.username) {
       this.$router.push("/notFound");
     }
 
