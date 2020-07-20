@@ -61,6 +61,9 @@ Vue.use(Vuelidate);
 axios.interceptors.request.use(
   function(config) {
     // Do something before request is sent
+    if (shared_data.username && !$cookies.get("session")) {
+      shared_data.logout();
+    }
     return config;
   },
   function(error) {
@@ -111,6 +114,12 @@ const shared_data = {
     localStorage.setItem("searchLastResults", JSON.stringify(recipes));
     this.searchLastResults = localStorage.getItem("searchLastResults");
   },
+
+  checkValidCookie() {
+    if (this.$root.store.username && !this.$cookies.get("session")) {
+      this.$root.store.logout();
+    }
+  }
 };
 console.log(shared_data);
 // Vue.prototype.$root.store = shared_data;
