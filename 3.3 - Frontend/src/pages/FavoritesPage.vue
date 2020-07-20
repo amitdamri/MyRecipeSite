@@ -7,7 +7,7 @@
           <p id="cancel-label">Please wait...</p>
         </div>
       </template>
-      <special-recipe-preview :recipes="recipes" recipesType="favorite" />
+      <special-recipe-preview :recipes="recipes" recipesType="api" />
     </b-overlay>
   </div>
 </template>

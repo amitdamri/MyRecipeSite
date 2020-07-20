@@ -155,20 +155,15 @@ export default {
     if (this.$root.store.username) {
       this.markAsWatched(this.$route.params.recipeId);
     }
-
-    if (this.$route.params.type == "favorite") {
-      this.isFavoriteRecipe = true;
-    }
     if (
-      this.$route.params.type == "api" ||
-      this.$route.params.type == "favorite"
-    )
-      await this.getInfoTwoRequests();
-    else if (
       this.$route.params.type == "myRecipes" ||
       this.$route.params.type == "familyRecipes"
-    )
+    ) {
       await this.getInfoOneRequest();
+    } else if (this.$route.params.type == "api") {
+      await this.checkIfFavoriteRecipe();
+      await this.getInfoTwoRequests();
+    }
   },
 
   beforeCreate() {
@@ -370,6 +365,20 @@ export default {
       } catch (err) {
         console.log(err);
         this.showSpinner = false;
+        this.$router.replace("/NotFound");
+      }
+    },
+    async checkIfFavoriteRecipe() {
+      try {
+        let response = await this.axios.get(
+          `http://localhost:3030/user/MyFavorites`
+        );
+        console.log(response.data[parseInt(this.$route.params.recipeId)]);
+        if (response.data[parseInt(this.$route.params.recipeId)])
+          this.isFavoriteRecipe = true;
+        return;
+      } catch (error) {
+        console.log(error);
         this.$router.replace("/NotFound");
       }
     },

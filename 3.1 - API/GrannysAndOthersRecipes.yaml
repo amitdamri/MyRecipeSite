@@ -1,0 +1,1059 @@
+openapi: 3.0.0
+info:
+  title: Granny's recipes API
+  description: This is a Granny's recipe API
+  contact:
+    email: amitdamr@post.bgu.ac.il
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.2
+servers:
+- url: http://localhost:3030
+  description: local host for testing
+- url: https://virtserver.swaggerhub.com/amitdamri/Recieps/1.0.2
+  description: SwaggerHub API Auto Mocking
+- url: https://simhon-server.database.windows.net
+  description: Production server
+tags:
+- name: auth
+  description: All authentication related routes
+- name: recipes
+  description: Operations related to retieving recipes from the api
+- name: user
+  description: Operations related to a specific user activity in the system (sign
+    up/in, perosnalized tabs, operations on the database)
+paths:
+  /user/recipePreview/{recipeIDs}:
+    get:
+      tags:
+      - user
+      summary: Return a preview of recipes array
+      description: Get from user recipe IDs and returns main details of the recipes
+      parameters:
+      - name: recipeIDs
+        in: path
+        description: The IDs of the recipes to return
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: array
+          example:
+          - 123
+          - 2
+          items:
+            minimum: 1
+            type: integer
+      responses:
+        "200":
+          description: Successful pull of recipe main details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/recipePreviewUserAddition'
+        "401":
+          description: Unauthorized
+        "404":
+          description: Recipe IDs should contain only numbers OR Recipe IDs should
+            be an array
+      security:
+      - cookieAuth: []
+  /recipes/recipePreview/{recipeIDs}:
+    get:
+      tags:
+      - recipes
+      summary: Return a preview of recipe
+      description: Get from user recipe ID and returns main details of the recipe
+      parameters:
+      - name: recipeIDs
+        in: path
+        description: The ID of the recipe returns
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: array
+          example:
+          - 123
+          - 2
+          items:
+            minimum: 1
+            type: integer
+      responses:
+        "200":
+          description: Successful pull of recipe main details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/recipePreview'
+        "401":
+          description: Unauthorized
+        "404":
+          description: Recipe IDs should contain only numbers OR Recipe IDs should
+            be an array
+  /auth/Register:
+    post:
+      tags:
+      - auth
+      summary: Creates new user in the system
+      description: Get user details and create new user in the system
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/registration'
+      responses:
+        "201":
+          description: User created
+        "409":
+          description: Username taken
+        "422":
+          description: Input rules don't validate
+  /auth/Login:
+    post:
+      tags:
+      - auth
+      summary: Login user
+      description: Get user's username and password and accept/reject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/userLogin'
+        required: true
+      responses:
+        "200":
+          description: Successfully authenticated
+          headers:
+            Set-Cookie:
+              style: simple
+              explode: false
+              schema:
+                type: string
+                example: session=8dsf8esaf65c1xdf3ax2asdcz3asd
+        "401":
+          description: Authentication failed
+        "404":
+          description: Username doesn't exist
+  /auth/Logout:
+    post:
+      tags:
+      - auth
+      summary: Logout user
+      description: logout theuser from the site
+      responses:
+        "200":
+          description: logout succeeded
+  /recipes/3RandomRecipes:
+    get:
+      tags:
+      - recipes
+      summary: Get 3 random recipes
+      description: Get 3 random recipes
+      responses:
+        "200":
+          description: returns array of 3 different recipes
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/recipePreview'
+                description: get dictionary of the recipes info while the key is the
+                  recipeID and the value is the recipes information.
+        "500":
+          description: Internal server error
+  /user/last3RecipesWatched:
+    get:
+      tags:
+      - user
+      summary: Last 3 recipes were viewed by user
+      description: Get 3 (or less) last recipes were viewed by logged-in user
+      responses:
+        "200":
+          description: Array of last 3 (or less) recipes were viewed by loggen-in
+            user
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/recipePreviewUserAddition'
+                description: get dictionary of the user 3 last recipes - only the
+                  user preview while the key is the recipe id, the value is the preview.
+        "500":
+          description: Internal server error
+      security:
+      - cookieAuth: []
+  /user/saveFavoriteRecipe:
+    post:
+      tags:
+      - user
+      summary: Save recipe as favorite
+      description: Save the given recipe as favorite of the user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/recipeID'
+      responses:
+        "200":
+          description: A new recipe has been saved to favorites
+        "404":
+          description: Recipe Not Found
+      security:
+      - cookieAuth: []
+  /user/addUserRecipe:
+    post:
+      tags:
+      - user
+      summary: Create a new recipe
+      description: a new recipe from the client is added to the server
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/body'
+      responses:
+        "201":
+          description: UserRecipe added successfully
+        "400":
+          description: Invalid input
+  /recipes/showRecipe/{recipeID}:
+    get:
+      tags:
+      - recipes
+      summary: Get info about specific recipe by recipeID
+      description: returns a recipe info includes - instructions, servings and extended
+        ingredients (name, amount, unit). The rest of the recipe information exists
+        in the previewRecipe section
+      parameters:
+      - name: recipeID
+        in: path
+        description: The id of the required recipe
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          example: 1
+      responses:
+        "200":
+          description: Successful operation - data of the specific recipe returned
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/showRecipe'
+                description: get dictionary of the recipe info while the key is the
+                  recipeID and the value is the recipe information.
+              example:
+                "1":
+                  extendedIngredients:
+                  - name: anchovy
+                    amount: 4
+                    unit: tbsp
+                    original: 4 tbsp of anchovy
+                  instructions:
+                  - number: 1
+                    step: Arrange onions in a single layer.
+                  - number: 2
+                    step: Something else
+                  servings: 5
+        "404":
+          description: Recipe not found.
+        "422":
+          description: recipeID must be an integer number.
+  /recipes/search/query/{searchQuery}/amount/{number}:
+    get:
+      tags:
+      - recipes
+      summary: find recipes by name and category
+      description: search for recipe in the spooncular API, using a search query.
+        will return results according to the {num} param. Can filter results by Cuisine,
+        Diet, Intolerance.
+      parameters:
+      - name: searchQuery
+        in: path
+        description: The search query for searching a query in the API
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: Simple Lemon Herb Chicken
+      - name: number
+        in: path
+        description: number of results to retrieve - 5/10/15
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          example: 10
+          enum:
+          - 5
+          - 10
+          - 15
+      - name: cuisine
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          $ref: '#/components/schemas/Cuisine'
+      - name: diet
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          $ref: '#/components/schemas/Diet'
+      - name: intolerances
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          $ref: '#/components/schemas/Intolerances'
+      responses:
+        "200":
+          description: Successful operation - search results returned
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/recipePreview'
+                description: get dictionary of the result recipes - only the preview
+                  while the key is the recipe id, the value is the preview.
+                example:
+                  "1":
+                    image: google.com/amazingHamburger111
+                    title: American Hamburger
+                    readyInMinutes: 60
+                    aggregateLikes: 100
+                    vegan: false
+                    vegetarian: false
+                    glutenFree: false
+        "404":
+          description: No recipes found for the search param
+        "422":
+          description: number must be 5/10/15 OR number must be an integer number
+            OR Inserted invalid option for cuisine OR Inserted invalid option for
+            diet OR Inserted invalid option for intolerances.
+  /user/MyFavorites:
+    get:
+      tags:
+      - user
+      summary: get favorites of specific user
+      description: returns a dictionary with the user favorite recipes ids, includes
+        the preview info of the user about these recipes. the rest of the information
+        is in the recipe preview.
+      responses:
+        "200":
+          description: Successful operation - favorites returned
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/recipePreviewUserAddition'
+                description: get array of the user favorites recipes - only the user
+                  preview while the key is the recipe id, the value is the preview.
+                example:
+                  "1":
+                    watchedBefore: true
+                    savedInFavorites: true
+        "401":
+          description: Unauthorized user.
+        "402":
+          description: Payment required
+        "404":
+          description: User not found
+      security:
+      - cookieAuth: []
+  /user/MyRecipes:
+    get:
+      tags:
+      - user
+      summary: get recipes created by the specific user
+      description: returns the recipes created by the user
+      responses:
+        "200":
+          description: Successful operation - Recipes returned
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/recipePreview'
+                description: get dictionary of the user recipes - only the preview
+                  while the key is the recipe id, the value is the preview.
+                example:
+                  "1":
+                    image: google.com/amazingHamburger111
+                    title: American Hamburger
+                    readyInMinutes: 60
+                    aggregateLikes: 100
+                    vegan: false
+                    vegetarian: false
+                    glutenFree: false
+                    watchedBefore: true
+                    savedInFavorites: true
+        "401":
+          description: Unauthorized user.
+      security:
+      - cookieAuth: []
+  /user/MyFamilyRecipes:
+    get:
+      tags:
+      - user
+      summary: get family recipes of the specific user
+      description: returns the family recipes of the user
+      responses:
+        "200":
+          description: Successful operation - Recipes returned
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/MyFamilyRecipe'
+                description: get dictionary of the user family recipes. the key is
+                  the recipe id, the value is the information.
+                example:
+                  "1":
+                    image: google.com/amazingHamburger111
+                    title: American Hamburger
+                    readyInMinutes: 60
+                    aggregateLikes: 100
+                    vegan: false
+                    vegetarian: false
+                    glutenFree: false
+                    watchedBefore: true
+                    savedInFavorites: true
+                    author: Damris mom
+                    whenAcceptable: Passover
+        "401":
+          description: Unauthorized user.
+      security:
+      - cookieAuth: []
+  /user/showUserRecipe/{recipeID}:
+    get:
+      tags:
+      - user
+      summary: Get info about specific user recipe by recipeID - that was created
+        by the logged user
+      description: returns a recipe full info.
+      parameters:
+      - name: recipeID
+        in: path
+        description: The id of the required recipe
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          example: 1
+      responses:
+        "200":
+          description: Successful operation - data of the specific recipe returned
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  allOf:
+                  - $ref: '#/components/schemas/recipePreview'
+                  - $ref: '#/components/schemas/showRecipe'
+                description: get dictionary of the recipe info while the key is the
+                  recipeID and the value is the recipe information.
+                example:
+                  "1":
+                    image: google.com/amazingHamburger111
+                    title: American Hamburger
+                    readyInMinutes: 60
+                    aggregateLikes: 100
+                    vegan: false
+                    vegetarian: false
+                    glutenFree: false
+                    watchedBefore: true
+                    savedInFavorites: true
+                    extendedIngredients:
+                    - name: anchovy
+                      amount: 4
+                      unit: tbsp
+                      original: 4 tbsp of anchovy
+                    instructions:
+                    - number: 1
+                      step: Arrange onions in a single layer.
+                    - number: 2
+                      step: Something else
+                    servings: 5
+        "404":
+          description: Recipe not found.
+        "422":
+          description: recipeID must be an integer number.
+  /user/showUserFamilyRecipe/{recipeID}:
+    get:
+      tags:
+      - user
+      summary: Get info about specific family recipe by recipeID that is correlated
+        to the logged user
+      description: returns a recipe info includes - instructions, servings and extended
+        ingredients (name, amount, unit). The rest of the recipe information exists
+        in MyFamilyRecipes section
+      parameters:
+      - name: recipeID
+        in: path
+        description: The id of the required recipe
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          example: 1
+      responses:
+        "200":
+          description: Successful operation - data of the specific recipe returned
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  allOf:
+                  - $ref: '#/components/schemas/MyFamilyRecipe'
+                  - $ref: '#/components/schemas/showRecipe'
+                description: get dictionary of the recipe info while the key is the
+                  recipeID and the value is the recipe information.
+                example:
+                  "1":
+                    image: google.com/amazingHamburger111
+                    title: American Hamburger
+                    readyInMinutes: 60
+                    aggregateLikes: 100
+                    vegan: false
+                    vegetarian: false
+                    glutenFree: false
+                    watchedBefore: true
+                    savedInFavorites: true
+                    author: Damris mom
+                    whenAcceptable: Passover
+                    extendedIngredients:
+                    - name: anchovy
+                      amount: 4
+                      unit: tbsp
+                      original: 4 tbsp of anchovy
+                    instructions:
+                    - number: 1
+                      step: Arrange onions in a single layer.
+                    - number: 2
+                      step: Something else
+                    servings: 5
+        "404":
+          description: Recipe not found.
+        "422":
+          description: recipeID must be an integer number.
+  /user/setUserWatchedRecipe:
+    post:
+      tags:
+      - user
+      summary: set that user has watched recipe
+      description: sets the user watchedBefore option about the given recipe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/recipeID'
+      responses:
+        "200":
+          description: User watched the recipe successfully.
+        "401":
+          description: Unauthorized user.
+        "402":
+          description: Payment required
+        "422":
+          description: recipeID must be an integer number.
+  /recipes/recipePreparationUser:
+    get:
+      tags:
+      - recipes
+      summary: Get full recipe details
+      description: Get full recipe details with current step user is at
+      parameters:
+      - name: recipeID
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          $ref: '#/components/schemas/recipeID'
+      responses:
+        "200":
+          description: Full recipe details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/recipeDetails'
+        "404":
+          description: No such recipeID
+      security:
+      - cookieAuth: []
+  /recipes/recipePreparationGuest:
+    get:
+      tags:
+      - recipes
+      summary: Get full recipe details
+      description: Get full recipe details
+      parameters:
+      - name: recipeID
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          $ref: '#/components/schemas/recipeID'
+      responses:
+        "200":
+          description: Full recipe details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/recipeDetails'
+        "404":
+          description: No such recipeID
+  /recipes/multRecipePreparation:
+    get:
+      tags:
+      - recipes
+      summary: Recipe capacities per required amount
+      description: Get full recipe details and capacities multiplicated by given integer
+      parameters:
+      - name: recipeID
+        in: query
+        description: The ID of the recipe returns
+        required: true
+        style: form
+        explode: true
+        schema:
+          $ref: '#/components/schemas/recipeID'
+      - name: capacity
+        in: query
+        description: An integer to multiplicate capacities by
+        required: true
+        style: form
+        explode: true
+        schema:
+          $ref: '#/components/schemas/recipeCapacity'
+      responses:
+        "200":
+          description: Full recipe detaild and capacities multiplicated by given integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/recipeDetails'
+        "404":
+          description: No such recipeID
+  /user/planMeal:
+    get:
+      tags:
+      - user
+      summary: Return all recipes saved for meal preparation
+      description: Get all recipes user has saved for preparing current meal
+      responses:
+        "200":
+          description: All recpies user has saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/multipleRecipes'
+        "404":
+          description: No such username
+      security:
+      - cookieAuth: []
+  /user/planMealAddRecipe:
+    post:
+      tags:
+      - user
+      summary: Add recipe to meal preparation
+      description: Add new recipe to list of all recipes towards meal preparation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/body_1'
+      responses:
+        "200":
+          description: Recipe was added successfully to saved recipes list towards
+            meal preparation
+        "404":
+          description: Username or recipeID doesn't exist
+      security:
+      - cookieAuth: []
+  /user/planMealChangeRecipesOrder:
+    put:
+      tags:
+      - user
+      summary: Add recipe to meal preparation
+      description: Add new recipe to list of all recipes towards meal preparation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/body_2'
+      responses:
+        "200":
+          description: New recipes list, order by new user's prefereneces
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/multipleRecipes'
+        "404":
+          description: No such user or recipeID
+      security:
+      - cookieAuth: []
+  /recipes/planMealRemoveRecipe:
+    put:
+      tags:
+      - recipes
+      - user
+      summary: Remove recipe from recipes list
+      description: Remove given recipe from recipes list towards meal preparation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/body_3'
+      responses:
+        "200":
+          description: Updated list excluded recipe chosen by user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/multipleRecipes'
+        "404":
+          description: No such user or recipeID
+      security:
+      - cookieAuth: []
+  /recipes/planMealClearRecipesList:
+    delete:
+      tags:
+      - recipes
+      - user
+      summary: Clear recipes list
+      description: Clear recipes list list towards meal preparation
+      responses:
+        "200":
+          description: Recipes list was successfully deleted
+        "404":
+          description: No such user
+      security:
+      - cookieAuth: []
+components:
+  schemas:
+    recipeID:
+      type: object
+      properties:
+        recipeID:
+          minimum: 1
+          type: integer
+          example: 123
+    recipePreview:
+      type: object
+      properties:
+        image:
+          type: string
+          example: google.com/amazingHamburger111
+        title:
+          type: string
+          example: American Hamburger
+        readyInMinutes:
+          type: integer
+          example: 60
+        aggregateLikes:
+          type: integer
+          example: 100
+        vegan:
+          type: boolean
+          example: false
+        vegetarian:
+          type: boolean
+          example: false
+        glutenFree:
+          type: boolean
+          example: false
+    recipePreviewUserAddition:
+      type: object
+      properties:
+        wacthedBefore:
+          type: boolean
+          example: true
+        savedInFavorites:
+          type: boolean
+          example: true
+    registration:
+      type: object
+      properties:
+        username:
+          type: string
+          example: kingDavid
+        firstName:
+          type: string
+          example: David
+        lastName:
+          type: string
+          example: Cohen
+        country:
+          type: string
+          example: Israel
+        password:
+          type: string
+          example: a!123
+        confirmPassword:
+          type: string
+          example: a!123
+        email:
+          type: string
+          example: davidcohen12345689@gmail.com
+        image:
+          type: string
+          example: https://pictures.com/mypic.png
+    userLogin:
+      type: object
+      properties:
+        username:
+          maxLength: 8
+          minLength: 3
+          type: string
+          description: Contain only letters
+          example: kingDavid
+        password:
+          minLength: 5
+          type: string
+          description: Contain letters with at least 1 numerical character and 1 special
+            character
+          example: a!123
+    multipleRecipes:
+      type: object
+      properties:
+        recipes:
+          type: array
+          items:
+            $ref: '#/components/schemas/multipleRecipes_recipes'
+        recipesNum:
+          type: integer
+          example: 5
+    recipeDetails:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Pizza
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/Steps'
+    recipeCapacity:
+      minimum: 1
+      type: integer
+      example: 3
+    showRecipe:
+      type: object
+      properties:
+        extendedIngredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/showRecipe_extendedIngredients'
+        instructions:
+          type: array
+          description: recipe instruction
+          items:
+            $ref: '#/components/schemas/showRecipe_instructions'
+        servings:
+          type: integer
+          description: number of servings
+          example: 5
+    Steps:
+      type: object
+      properties:
+        equipment:
+          type: array
+          items:
+            $ref: '#/components/schemas/Steps_equipment'
+        ingredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/Steps_ingredients'
+        number:
+          type: integer
+          example: 1
+        step:
+          type: string
+          example: Preheat the oven to 200 degrees F
+      description: Model containing the ingredients and directions of a recipe
+    MyFamilyRecipe:
+      allOf:
+      - $ref: '#/components/schemas/recipePreview'
+      - type: object
+        properties:
+          author:
+            type: string
+            example: Mom
+          whenAcceptable:
+            type: string
+            description: when do you make it usually
+            example: New year celebration
+    Cuisine:
+      type: string
+      description: filter the results by cuisine filter
+      enum:
+      - African
+      - American
+      - British
+      - Cajun
+      - Caribbean
+      - Chinese
+      - Eastern European
+      - European
+      - French
+      - German
+      - Greek
+      - Indian
+      - Irish
+      - Italian
+      - Japanese
+      - Jewish
+      - Korean
+      - Latin American
+      - Mediterranean
+      - Mexican
+      - Middle Eastern
+      - Nordic
+      - Southern
+      - Spanish
+      - Thai
+      - Vietnamese
+    Diet:
+      type: string
+      description: filter the results by diet filter
+      enum:
+      - Gluten Free
+      - Ketogenic
+      - Vegetarian
+      - Lacto-Vegetarian
+      - Ovo-Vegetarian
+      - Vegan
+      - Pescetarian
+      - Paleo
+      - Primal
+      - Whole30
+    Intolerances:
+      type: string
+      description: filter the results by intolerances filter
+      enum:
+      - Dairy
+      - Egg
+      - Gluten
+      - Grain
+      - Peanut
+      - Seafood
+      - Sesame
+      - Shellfish
+      - Soy
+      - Sulfite
+      - Tree Nut
+      - Wheat
+    body:
+      allOf:
+      - $ref: '#/components/schemas/showRecipe'
+      - $ref: '#/components/schemas/recipePreview'
+    body_1:
+      type: object
+      properties:
+        recipeID:
+          $ref: '#/components/schemas/recipeID'
+    body_2:
+      type: object
+      properties:
+        recipeToSetNO:
+          $ref: '#/components/schemas/recipeID'
+        newNo:
+          type: integer
+          example: 2
+    body_3:
+      type: object
+      properties:
+        recipeID:
+          $ref: '#/components/schemas/recipeID'
+    multipleRecipes_recipes:
+      type: object
+      properties:
+        recipeNo:
+          type: integer
+          example: 1
+        recipe:
+          $ref: '#/components/schemas/recipeDetails'
+    showRecipe_extendedIngredients:
+      type: object
+      properties:
+        name:
+          type: string
+          description: ingredient name
+          example: anchovy
+        amount:
+          type: number
+          description: aomunt of this ingredient
+          example: 4
+        unit:
+          type: string
+          example: tbsp
+        original:
+          type: string
+          example: 4 tbsp of anchovy
+    showRecipe_instructions:
+      type: object
+      properties:
+        number:
+          type: number
+          example: 1
+        step:
+          type: string
+          example: Arrange onions in a single layer over pastry, leaving a 1-inch
+            border around edge.
+    Steps_temperature:
+      type: object
+      properties:
+        number:
+          type: number
+          example: 200
+        unit:
+          type: string
+          example: Fahrenheit
+    Steps_equipment:
+      type: object
+      properties:
+        image:
+          type: string
+          example: oven.jpg
+        name:
+          type: string
+          example: oven
+        temperature:
+          $ref: '#/components/schemas/Steps_temperature'
+    Steps_ingredients:
+      type: object
+      properties:
+        name:
+          type: string
+          example: 1 teaspoon salt
+        image:
+          type: string
+          example: pecans.jpg
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      name: session
+      in: cookie
