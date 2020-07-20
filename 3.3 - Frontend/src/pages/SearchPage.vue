@@ -146,6 +146,8 @@ export default {
     async searchRecipes() {
       //init data
       try {
+        if (this.searchQuery == "") return;
+
         let params = {};
         this.results = [];
         this.isFound = true;
