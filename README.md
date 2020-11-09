@@ -1,4 +1,4 @@
-# assignment-3-3-205520141_312199698
+# assignment-3-3-MyRecipeSite
 Assignment 3-3 Version 1.0 10-06-20  
 ---------------------------------------------------------------------------------------------------------
 - Names: Amit Damri & Dvir Simhon  
